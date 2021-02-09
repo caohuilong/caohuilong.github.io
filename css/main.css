@@ -1637,7 +1637,7 @@ pre code {
   width: 100%;
 }
 .with-love {
-  color: #ABB2B9;
+  color: #878D93;
   display: inline-block;
   margin: 0 5px;
   animation: icon-animate 1.33s ease-in-out infinite;
@@ -1727,7 +1727,7 @@ pre code {
   z-index: 1500;
 }
 .reading-progress-bar {
-  background: #B5BBC1;
+  background: #878D93;
   height: 3px;
   left: 0;
   position: fixed;
@@ -2582,7 +2582,7 @@ mark.search-keyword {
 }
 .header-inner {
   background: var(--content-bg-color);
-  border-radius: initial;
+  border-radius: 15px 15px 15px 15px;
   box-shadow: 0 2px 2px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.06), 0 1px 5px 0 rgba(0,0,0,0.12);
   width: 240px;
 }
@@ -2616,7 +2616,7 @@ mark.search-keyword {
   }
 }
 .main-inner {
-  border-radius: initial;
+  border-radius: 15px 15px 15px 15px;
   box-sizing: border-box;
   width: calc(100% - 252px);
 }
@@ -2738,7 +2738,7 @@ mark.search-keyword {
 }
 .sidebar-inner {
   background: var(--content-bg-color);
-  border-radius: initial;
+  border-radius: 15px;
   box-shadow: 0 2px 2px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.06), 0 1px 5px 0 rgba(0,0,0,0.12), 0 -1px 0.5px 0 rgba(0,0,0,0.09);
   box-sizing: border-box;
   color: var(--text-color);
@@ -2805,7 +2805,7 @@ mark.search-keyword {
 .main-inner > .comments,
 .main-inner > .pagination {
   background: var(--content-bg-color);
-  border-radius: initial;
+  border-radius: 15px 15px 15px 15px;
   box-shadow: 0 2px 2px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.06), 0 1px 5px 0 rgba(0,0,0,0.12);
 }
 .main-inner > .sub-menu:not(:first-child):not(.sub-menu),
@@ -2813,7 +2813,7 @@ mark.search-keyword {
 .main-inner > .tabs-comment:not(:first-child):not(.sub-menu),
 .main-inner > .comments:not(:first-child):not(.sub-menu),
 .main-inner > .pagination:not(:first-child):not(.sub-menu) {
-  border-radius: initial;
+  border-radius: 15px;
   box-shadow: 0 2px 2px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.06), 0 1px 5px 0 rgba(0,0,0,0.12), 0 -1px 0.5px 0 rgba(0,0,0,0.09);
   margin-top: 12px;
 }
@@ -2882,10 +2882,14 @@ mark.search-keyword {
   }
 }
 body {
-  background-image: url("../../themes/next/source/images/background.webp");
+  background-image: url("../images/background.webp");
   background-repeat: no-repeat;
   background-attachment: fixed;
-  background-position: center;
+  background-size: cover;
+  background-position: 50% 50%;
+}
+.content {
+  opacity: 0.85;
 }
 .sidebar-inner {
   background: rgba(255,255,255,0.8);

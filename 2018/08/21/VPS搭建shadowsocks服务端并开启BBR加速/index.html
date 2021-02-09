@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-my.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-my.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-my.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"caohuilong.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.2.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+<meta name="description" content="前言最近教研室很多同学来问有没有公用的 VPN，教研室以前有师兄去买过一些 VPN，但现在师兄也毕业了就用不了了。为了同学们的方便，作为网管应该尽力满足大家日常查阅资料的需求，于是向老师申请了经费去购买了一台 VPS 来搭建教研室公用的 VPN。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vultr CentOS搭建shadowsocks服务端并开启BBR加速">
+<meta property="og:url" content="http://caohuilong.github.io/2018/08/21/VPS%E6%90%AD%E5%BB%BAshadowsocks%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%B9%B6%E5%BC%80%E5%90%AFBBR%E5%8A%A0%E9%80%9F/index.html">
+<meta property="og:site_name" content="WooOh&#39;s blog">
+<meta property="og:description" content="前言最近教研室很多同学来问有没有公用的 VPN，教研室以前有师兄去买过一些 VPN，但现在师兄也毕业了就用不了了。为了同学们的方便，作为网管应该尽力满足大家日常查阅资料的需求，于是向老师申请了经费去购买了一台 VPS 来搭建教研室公用的 VPN。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-08-21T11:34:00.000Z">
+<meta property="article:modified_time" content="2020-09-25T01:16:16.896Z">
+<meta property="article:author" content="WooOh">
+<meta property="article:tag" content="shadowsocks">
+<meta property="article:tag" content="centos">
+<meta property="article:tag" content="BBR">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://caohuilong.github.io/2018/08/21/VPS%E6%90%AD%E5%BB%BAshadowsocks%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%B9%B6%E5%BC%80%E5%90%AFBBR%E5%8A%A0%E9%80%9F/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>Vultr CentOS搭建shadowsocks服务端并开启BBR加速 | WooOh's blog</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="WooOh's blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">WooOh's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">愿所有的等待，终能遇见幸福</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">60</span></a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">16</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">41</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B4%AD%E4%B9%B0-VPS"><span class="nav-number">2.</span> <span class="nav-text">购买 VPS</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E8%BF%87%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">安装过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Shadowsocks-%E6%9C%8D%E5%8A%A1"><span class="nav-number">3.0.1.</span> <span class="nav-text">安装 Shadowsocks 服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-%E5%8A%A0%E9%80%9F"><span class="nav-number">3.0.2.</span> <span class="nav-text">TCP 加速</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="WooOh"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">WooOh</p>
+  <div class="site-description" itemprop="description">学着去分享</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/caohuilong" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;caohuilong" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:cao130507@163.com" title="E-Mail → mailto:cao130507@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/cao0507" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;cao0507" rel="noopener" target="_blank"><i class="fa fa-codiepie fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+
+    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=360 height=86 src="//music.163.com/outchain/player?type=2&id=2919622&auto=1&height=66"></iframe>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://caohuilong.github.io/2018/08/21/VPS%E6%90%AD%E5%BB%BAshadowsocks%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%B9%B6%E5%BC%80%E5%90%AFBBR%E5%8A%A0%E9%80%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="WooOh">
+      <meta itemprop="description" content="学着去分享">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WooOh's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Vultr CentOS搭建shadowsocks服务端并开启BBR加速
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-08-21 19:34:00" itemprop="dateCreated datePublished" datetime="2018-08-21T19:34:00+08:00">2018-08-21</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-09-25 09:16:16" itemprop="dateModified" datetime="2020-09-25T09:16:16+08:00">2020-09-25</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/VPN/" itemprop="url" rel="index"><span itemprop="name">VPN</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span id="/2018/08/21/VPS%E6%90%AD%E5%BB%BAshadowsocks%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%B9%B6%E5%BC%80%E5%90%AFBBR%E5%8A%A0%E9%80%9F/" class="post-meta-item leancloud_visitors" data-flag-title="Vultr CentOS搭建shadowsocks服务端并开启BBR加速" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近教研室很多同学来问有没有公用的 VPN，教研室以前有师兄去买过一些 VPN，但现在师兄也毕业了就用不了了。为了同学们的方便，作为网管应该尽力满足大家日常查阅资料的需求，于是向老师申请了经费去购买了一台 VPS 来搭建教研室公用的 VPN。</p>
+<a id="more"></a>
+
+<h1 id="购买-VPS"><a href="#购买-VPS" class="headerlink" title="购买 VPS"></a>购买 VPS</h1><p>我这里购买的是 vultr 的 VPS，在新加坡的节点，每个月5美元，其实是按小时计费，每小时0.007美元，如果出问题了可以方便的停止购买，不像其他厂商按年一次性付费的话，万一不能用了就很亏。操作系统选择 CentOS 7 64位。</p>
+<h1 id="安装过程"><a href="#安装过程" class="headerlink" title="安装过程"></a>安装过程</h1><h3 id="安装-Shadowsocks-服务"><a href="#安装-Shadowsocks-服务" class="headerlink" title="安装 Shadowsocks 服务"></a>安装 Shadowsocks 服务</h3><p>shadowsocks有很多版本，如Python，node.js，libev，Go等，Python版本用的人是最多的，但很久没有更新了，这里选择 Go 版本的shadowsocks。</p>
+<p>在安装shadowsocks之前需要先<strong>安装 Go 语言的环境</strong>：</p>
+<ul>
+<li><p>从官网下载 Linux 平台的源码包</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># wget https:&#x2F;&#x2F;dl.google.com&#x2F;go&#x2F;go1.10.3.linux-amd64.tar.gz</span><br></pre></td></tr></table></figure></li>
+<li><p>解压到指定目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># sudo tar zxvf go1.10.3.linux-amd64.tar.gz -C &#x2F;usr&#x2F;local&#x2F;</span><br></pre></td></tr></table></figure></li>
+<li><p>配置环境变量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># vi .bashrc</span><br><span class="line">添加</span><br><span class="line">export PATH&#x3D;$PATH:&#x2F;usr&#x2F;local&#x2F;go&#x2F;bin</span><br></pre></td></tr></table></figure>
+<p>保存并使生效：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># source .bashrc</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>安装 shadowsocks</strong>，使用一键安装脚本（<a target="_blank" rel="noopener" href="https://github.com/iMeiji/shadowsocks_install%EF%BC%89">https://github.com/iMeiji/shadowsocks_install）</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># wget --no-check-certificate https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;iMeiji&#x2F;shadowsocks_install&#x2F;master&#x2F;shadowsocks-go.sh</span><br><span class="line"># chmod +x shadowsocks-go.sh</span><br><span class="line"># .&#x2F;shadowsocks-go.sh 2&gt;&amp;1 | tee shadowsocks-go.log</span><br></pre></td></tr></table></figure>
+<p><strong>卸载 shadowsocks 方法：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># .&#x2F;shadowsocks-go.sh uninstall</span><br></pre></td></tr></table></figure>
+<p><strong>shadowsocks 常用命令：</strong></p>
+<ul>
+<li>启动：<code>/etc/init.d/shadowsocks start </code></li>
+<li>停止：<code>/etc/init.d/shadowsocks stop</code></li>
+<li>重启：<code>/etc/init.d/shadowsocks restart</code> </li>
+<li>状态：<code>/etc/init.d/shadowsocks status</code></li>
+</ul>
+<p>执行完前面的安装脚本后，查看 shadowsocks 的运行状态：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># &#x2F;etc&#x2F;init.d&#x2F;shadowsocks status</span><br><span class="line">shadowsocks-go running with PID 1629</span><br></pre></td></tr></table></figure>
+<p>能看到进程 ID 说明 shadowsocks 服务已经在运行了。</p>
+<p><strong>配置 shadowsocks 开机自启动：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># vi &#x2F;etc&#x2F;rc.local</span><br><span class="line">添加</span><br><span class="line">&#x2F;etc&#x2F;init.d&#x2F;shadowsocks restart</span><br></pre></td></tr></table></figure>
+<p>这样在系统重启后就可以自动加载 shadowsocks 服务了。</p>
+<p><strong>配置防火墙：</strong></p>
+<p>检查防火墙是否允许你设定的端口进行通信</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># iptables -vnL | grep 8989</span><br></pre></td></tr></table></figure>
+<p>如果没有信息的话，就是防火墙不允许该端口进行通信。 </p>
+<p>需设置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># firewall-cmd --zone&#x3D;public --add-port&#x3D;8989&#x2F;tcp --permanent</span><br><span class="line"># firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>由于 CentOS 7 默认安装的是 firewalld，并没有安装 iptables-services，不能使用 iptables-save 来保存iptables 规则并在下次启动时自动加载，所以上面使用是 firewalld 来配置永久规则，这样在关机重启后规则也不会消失。</p>
+</blockquote>
+<p>到这里，shadowsocks 服务器就基本上已经配置好了，你可以使用客户端来上外网了。但这时候的网络连接的速度可能只能够保证查查网页，如果要下载或者看 YouTube 速度很慢，所以后将进行配置TCP 加速。</p>
+<hr>
+<h3 id="TCP-加速"><a href="#TCP-加速" class="headerlink" title="TCP 加速"></a>TCP 加速</h3><p>在后面会升级系统内核，所以先查看一下服务器的内核版本：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># uname -a</span><br><span class="line">Linux vultr.guest 3.10.0-862.3.2.el7.x86_64 #1 SMP Mon May 21 23:36:36 UTC 2018 x86_64 x86_64 x86_64 GNU&#x2F;Linux</span><br></pre></td></tr></table></figure>
+<p>加速有锐速加速和 Google BBR 加速，这里使用 BBR 加速。TCP BBR是谷歌出品的 TCP 拥塞控制算法，目的是要尽量跑满带宽，并且尽量不要有排队的情况。BBR 可以起到单边加速 TCP 连接的效果。</p>
+<p>Google提交到Linux主线并发表在ACM  queue期刊上的TCP-BBR拥塞控制算法。继承了Google“先在生产环境上部署，再开源和发论文”的研究传统。TCP-BBR已经再YouTube服务器和Google跨数据中心的内部广域网(B4)上部署。由此可见出该算法的前途。 </p>
+<p>TCP-BBR的目标就是最大化利用网络上瓶颈链路的带宽。一条网络链路就像一条水管，要想最大化利用这条水管，最好的办法就是给这跟水管灌满水。 </p>
+<p>BBR解决了两个问题： </p>
+<ul>
+<li>在有一定丢包率的网络链路上充分利用带宽。非常适合高延迟，高带宽的网络链路。 </li>
+<li>降低网络链路上的buffer占用率，从而降低延迟。非常适合慢速接入网络的用户。 </li>
+</ul>
+<p>Google 在 2016年9月份开源了他们的优化网络拥堵算法BBR，最新版本的 Linux内核(4.9-rc8)中已经集成了该算法。 </p>
+<p><strong>一键安装脚本：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># wget --no-check-certificate https:&#x2F;&#x2F;github.com&#x2F;teddysun&#x2F;across&#x2F;raw&#x2F;master&#x2F;bbr.sh</span><br><span class="line"># chmod +x bbr.sh</span><br><span class="line"># .&#x2F;bbr.sh</span><br></pre></td></tr></table></figure>
+<p>安装完成后会提示重启，重启完成后，查看内核：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># uname -r</span><br><span class="line">4.18.3-1.el7.elrepo.x86_64</span><br></pre></td></tr></table></figure>
+<p>高于 4.9 就可以了</p>
+<p>检查是否开启 BBR：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># sysctl net.ipv4.tcp_available_congestion_control</span><br><span class="line">net.ipv4.tcp_available_congestion_control &#x3D; reno cubic bbr</span><br><span class="line"></span><br><span class="line"># sysctl net.ipv4.tcp_congestion_control</span><br><span class="line">net.ipv4.tcp_congestion_control &#x3D; bbr</span><br><span class="line"></span><br><span class="line"># sysctl net.core.default_qdisc</span><br><span class="line">net.core.default_qdisc &#x3D; fq</span><br><span class="line"></span><br><span class="line"># lsmod | grep bbr</span><br><span class="line">tcp_bbr                20480  7</span><br><span class="line">#返回值有 tcp_bbr 则说明已经启动</span><br></pre></td></tr></table></figure>
+<p>完成以上步骤，则 TCP 加速也已经配置好了，接下来就可以体验飞快的下载速度以及 1080p 的高清视屏啦！</p>
+<p>shadowsocks 客户端下载连接：<a target="_blank" rel="noopener" href="https://shadowsocks.org/en/download/clients.html">Shadowsocks - Clients</a> </p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>原创技术分享，您的支持将鼓励我继续创作</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.png" alt="WooOh 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="WooOh 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>WooOh
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://caohuilong.github.io/2018/08/21/VPS%E6%90%AD%E5%BB%BAshadowsocks%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%B9%B6%E5%BC%80%E5%90%AFBBR%E5%8A%A0%E9%80%9F/" title="Vultr CentOS搭建shadowsocks服务端并开启BBR加速">http://caohuilong.github.io/2018/08/21/VPS搭建shadowsocks服务端并开启BBR加速/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/shadowsocks/" rel="tag"><i class="fa fa-tag"></i> shadowsocks</a>
+              <a href="/tags/centos/" rel="tag"><i class="fa fa-tag"></i> centos</a>
+              <a href="/tags/BBR/" rel="tag"><i class="fa fa-tag"></i> BBR</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/07/24/KVM%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A3%81%E7%9B%98%E6%89%A9%E5%AE%B9/" rel="prev" title="KVM 虚拟机磁盘扩容">
+                  <i class="fa fa-chevron-left"></i> KVM 虚拟机磁盘扩容
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/08/21/ubuntu%E9%85%8D%E7%BD%AEshadowsocks%E5%AE%A2%E6%88%B7%E7%AB%AF/" rel="next" title="Ubuntu 配置 shadowsocks 客户端">
+                  Ubuntu 配置 shadowsocks 客户端 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">WooOh</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">211k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:11</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div><script color="120,120,120" opacity="0.5" zIndex="-1" count="150" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"DGWyhEv7cF9n6xMxtalVTAG0-gzGzoHsz","appKey":"euXiOFwqDNLAWiPiCgXWWUQ8","serverURLs":"dgwyhev7.lc-cn-n1-shared.com","placeholder":"留下你的爪印","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"recordIP":false,"enableQQ":false,"requiredFields":[]}, {
+      el: '#valine-comments',
+      path: "/2018/08/21/VPS%E6%90%AD%E5%BB%BAshadowsocks%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%B9%B6%E5%BC%80%E5%90%AFBBR%E5%8A%A0%E9%80%9F/",
+      serverURLs: "dgwyhev7.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

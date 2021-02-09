@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-my.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-my.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-my.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"caohuilong.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.2.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+<meta name="description" content="概述之前配置好了自己的 vim python 开发环境，为了方便在其他主机上面迁移之前的开发环境，所以将所有的插件包都打包压缩了一份，和 vim 配置文件 .vimrc 一起上传到了百度云盘（下载链接：vim插件包 密码：neio）。通过下载这个文件夹就可以在新的主机上部署 vim 的 python 开发环境了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="迁移vim-python开发环境">
+<meta property="og:url" content="http://caohuilong.github.io/2018/08/23/%E8%BF%81%E7%A7%BBvim-python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/index.html">
+<meta property="og:site_name" content="WooOh&#39;s blog">
+<meta property="og:description" content="概述之前配置好了自己的 vim python 开发环境，为了方便在其他主机上面迁移之前的开发环境，所以将所有的插件包都打包压缩了一份，和 vim 配置文件 .vimrc 一起上传到了百度云盘（下载链接：vim插件包 密码：neio）。通过下载这个文件夹就可以在新的主机上部署 vim 的 python 开发环境了。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-08-23T08:06:23.000Z">
+<meta property="article:modified_time" content="2020-09-25T01:16:16.896Z">
+<meta property="article:author" content="WooOh">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="vim">
+<meta property="article:tag" content="YouCompleteMe">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://caohuilong.github.io/2018/08/23/%E8%BF%81%E7%A7%BBvim-python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>迁移vim-python开发环境 | WooOh's blog</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="WooOh's blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">WooOh's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">愿所有的等待，终能遇见幸福</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">60</span></a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">16</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">41</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4"><span class="nav-number">2.</span> <span class="nav-text">步骤</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="WooOh"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">WooOh</p>
+  <div class="site-description" itemprop="description">学着去分享</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/caohuilong" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;caohuilong" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:cao130507@163.com" title="E-Mail → mailto:cao130507@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/cao0507" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;cao0507" rel="noopener" target="_blank"><i class="fa fa-codiepie fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+
+    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=360 height=86 src="//music.163.com/outchain/player?type=2&id=2919622&auto=1&height=66"></iframe>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://caohuilong.github.io/2018/08/23/%E8%BF%81%E7%A7%BBvim-python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="WooOh">
+      <meta itemprop="description" content="学着去分享">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WooOh's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          迁移vim-python开发环境
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-08-23 16:06:23" itemprop="dateCreated datePublished" datetime="2018-08-23T16:06:23+08:00">2018-08-23</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-09-25 09:16:16" itemprop="dateModified" datetime="2020-09-25T09:16:16+08:00">2020-09-25</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/VIM/" itemprop="url" rel="index"><span itemprop="name">VIM</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span id="/2018/08/23/%E8%BF%81%E7%A7%BBvim-python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" class="post-meta-item leancloud_visitors" data-flag-title="迁移vim-python开发环境" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>之前配置好了自己的 vim python 开发环境，为了方便在其他主机上面迁移之前的开发环境，所以将所有的插件包都打包压缩了一份，和 vim 配置文件 .vimrc 一起上传到了百度云盘（下载链接：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1QJtx7CPloS4sKmwD3xjj8g">vim插件包</a> 密码：neio）。通过下载这个文件夹就可以在新的主机上部署 vim 的 python 开发环境了。</p>
+<a id="more"></a>
+
+<h1 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h1><ol>
+<li><p>下载插件包与配置文件</p>
+<p>先使用百度云盘下载这两个文件，然后再通过 ftp 上传到你的 Linux 主机上。我也试过直接在 Linux 里面通过 wget 来下载百度云盘的文件，但是这个要使用浏览器来生成下载链接，挺麻烦的，所以我就不在这里说明了。</p>
+</li>
+<li><p>将 .vimrc 放到用户主目录下，即 <code>~/</code> 目录</p>
+<p>.vimrc 文件里面主要记录需要安装哪些插件，我的 vim python 开发环境安装的插件有：</p>
+<ul>
+<li><code>VundleVim/Vundle.vim</code></li>
+<li><code>Valloric/YouCompleteMe</code></li>
+<li><code>Lokaltog/vim-powerline</code></li>
+<li><code>scrooloose/nerdtree</code></li>
+<li><code>Yggdroot/indentLine</code></li>
+<li><code>jiangmiao/auto-pairs</code></li>
+<li><code>tell-k/vim-autopep8</code></li>
+<li><code>scrooloose/nerdcommenter</code></li>
+<li><code>altercation/vim-colors-solarized</code></li>
+<li><code>w0rp/ale</code></li>
+<li><code>scrooloose/syntastic</code></li>
+<li><code>nvie/vim-flake8</code></li>
+</ul>
+<p>以及一些常用的配置信息，具体如下所示</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br></pre></td><td class="code"><pre><span class="line">$ vi ~&#x2F;.vimrc</span><br><span class="line">&quot;去掉vi的一致性&quot;</span><br><span class="line">set nocompatible</span><br><span class="line"></span><br><span class="line">filetype off</span><br><span class="line">set rtp+&#x3D;~&#x2F;.vim&#x2F;bundle&#x2F;Vundle.vim</span><br><span class="line">call vundle#begin()</span><br><span class="line">Plugin &#39;VundleVim&#x2F;Vundle.vim&#39;</span><br><span class="line">Plugin &#39;Valloric&#x2F;YouCompleteMe&#39;</span><br><span class="line">Plugin &#39;Lokaltog&#x2F;vim-powerline&#39;</span><br><span class="line">Plugin &#39;scrooloose&#x2F;nerdtree&#39;</span><br><span class="line">Plugin &#39;Yggdroot&#x2F;indentLine&#39;</span><br><span class="line">Plugin &#39;jiangmiao&#x2F;auto-pairs&#39;</span><br><span class="line">Plugin &#39;tell-k&#x2F;vim-autopep8&#39;</span><br><span class="line">Plugin &#39;scrooloose&#x2F;nerdcommenter&#39;</span><br><span class="line">Plugin &#39;altercation&#x2F;vim-colors-solarized&#39;</span><br><span class="line">&quot;Plugin &#39;w0rp&#x2F;ale&#39;</span><br><span class="line">Plugin &#39;scrooloose&#x2F;syntastic&#39;</span><br><span class="line">Plugin &#39;nvie&#x2F;vim-flake8&#39;</span><br><span class="line">call vundle#end()</span><br><span class="line">filetype plugin indent on</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&quot;显示行号&quot;</span><br><span class="line">set number</span><br><span class="line">&quot; 隐藏滚动条&quot;    </span><br><span class="line">&quot;set guioptions-&#x3D;r </span><br><span class="line">&quot;set guioptions-&#x3D;L</span><br><span class="line">&quot;set guioptions-&#x3D;b</span><br><span class="line">&quot;隐藏顶部标签栏&quot;</span><br><span class="line">&quot;set showtabline&#x3D;0</span><br><span class="line">&quot;设置字体&quot;</span><br><span class="line">set guifont&#x3D;Monaco:h13         </span><br><span class="line">set nowrap  &quot;设置不折行&quot;</span><br><span class="line">&quot;set fileformat&#x3D;unix &quot;设置以unix的格式保存文件&quot;</span><br><span class="line">&quot;set cindent     &quot;设置C样式的缩进格式&quot;</span><br><span class="line">set tabstop&#x3D;4   &quot;设置table长度&quot;</span><br><span class="line">set shiftwidth&#x3D;4        &quot;同上&quot;</span><br><span class="line">set showmatch   &quot;显示匹配的括号&quot;</span><br><span class="line">set scrolloff&#x3D;5     &quot;距离顶部和底部5行&quot;</span><br><span class="line">set laststatus&#x3D;2    &quot;命令行为两行&quot;</span><br><span class="line">set fenc&#x3D;utf-8      &quot;文件编码&quot;</span><br><span class="line">set backspace&#x3D;2</span><br><span class="line">set mouse&#x3D;v     &quot;启用鼠标&quot;</span><br><span class="line">set selection&#x3D;exclusive</span><br><span class="line">set selectmode&#x3D;mouse,key</span><br><span class="line">set matchtime&#x3D;5</span><br><span class="line">set ignorecase      &quot;忽略大小写&quot;</span><br><span class="line">set incsearch</span><br><span class="line">set hlsearch        &quot;高亮搜索项&quot;</span><br><span class="line">set noexpandtab     &quot;不允许扩展table&quot;</span><br><span class="line">set whichwrap+&#x3D;&lt;,&gt;,h,l</span><br><span class="line">set autoread</span><br><span class="line">set cursorline      &quot;突出显示当前行&quot;</span><br><span class="line">&quot;set cursorcolumn        &quot;突出显示当前列&quot;</span><br><span class="line">syntax on   &quot;开启语法高亮&quot;</span><br><span class="line">&quot;set background&#x3D;dark     &quot;设置背景色&quot;</span><br><span class="line">&quot;colorscheme solarized</span><br><span class="line">&quot;let g:solarized_termcolors&#x3D;256  &quot;solarized主题设置在终端下的设置&quot;</span><br><span class="line"></span><br><span class="line">&quot;syntastic</span><br><span class="line">let python_highlight_all&#x3D;1</span><br><span class="line">&quot;设置error和warning的标志</span><br><span class="line">let g:syntastic_enable_signs&#x3D;1</span><br><span class="line">let g:syntastic_error_symbol&#x3D;&#39;✗&#39;</span><br><span class="line">let g:syntastic_warning_symbol&#x3D;&#39;►&#39;</span><br><span class="line">&quot;总是打开Location</span><br><span class="line">&quot;List（相当于QuickFix）窗口，如果你发现syntastic因为与其他插件冲突而经常崩溃，将下面选项置0</span><br><span class="line">let g:syntastic_always_populate_loc_list &#x3D; 0</span><br><span class="line">&quot;自动打开LocatonList，默认值为2，表示发现错误时不自动打开，当修正以后没有再发现错误时自动关闭，置1表示自动打开自动关闭，0表示关闭自动打开和自动关闭，3表示自动打开，但不自动关闭</span><br><span class="line">let g:syntastic_auto_loc_list &#x3D; 2</span><br><span class="line">&quot;修改Locaton List窗口高度</span><br><span class="line">let g:syntastic_loc_list_height &#x3D; 3</span><br><span class="line">&quot;打开文件时自动进行检查</span><br><span class="line">let g:syntastic_check_on_open &#x3D; 1</span><br><span class="line">let g:syntastic_check_on_wq &#x3D; 1</span><br><span class="line">&quot;自动跳转到发现的第一个错误或警告处</span><br><span class="line">let g:syntastic_auto_jump &#x3D; 1</span><br><span class="line">&quot;高亮错误</span><br><span class="line">let g:syntastic_enable_highlighting&#x3D;0</span><br><span class="line">&quot;设置pyflakes为默认的python语法检查工具</span><br><span class="line">let g:syntastic_python_checkers &#x3D; [&#39;pyflakes&#39;]</span><br><span class="line"></span><br><span class="line">&quot;按F5运行python&quot;</span><br><span class="line">map &lt;F5&gt; :call RunPython()&lt;CR&gt;</span><br><span class="line">function RunPython()</span><br><span class="line">	exec &quot;W&quot;</span><br><span class="line">	if &amp;filetype &#x3D;&#x3D; &#39;python&#39;</span><br><span class="line">		exec &quot;!time python %&quot;</span><br><span class="line">	endif</span><br><span class="line">endfunction</span><br><span class="line"></span><br><span class="line">&quot;默认配置文件路径&quot;</span><br><span class="line">let g:ycm_global_ycm_extra_conf &#x3D; &#39;~&#x2F;.ycm_extra_conf.py&#39;</span><br><span class="line">&quot;打开vim时不再询问是否加载ycm_extra_conf.py配置&quot;</span><br><span class="line">let g:ycm_confirm_extra_conf&#x3D;0</span><br><span class="line">set completeopt&#x3D;longest,menu</span><br><span class="line">&quot;python解释器路径&quot;</span><br><span class="line">let g:ycm_path_to_python_interpreter&#x3D;&#39;&#x2F;usr&#x2F;bin&#x2F;python&#39;</span><br><span class="line">&quot;是否开启语义补全&quot;</span><br><span class="line">let g:ycm_seed_identifiers_with_syntax&#x3D;1 </span><br><span class="line">&quot;是否在注释中也开启补全&quot; </span><br><span class="line">let g:ycm_complete_in_comments&#x3D;1 </span><br><span class="line">let g:ycm_collect_identifiers_from_comments_and_strings &#x3D; 0</span><br><span class="line">&quot;开始补全的字符数&quot;</span><br><span class="line">let g:ycm_min_num_of_chars_for_completion&#x3D;2</span><br><span class="line">&quot;补全后自动关机预览窗口&quot;</span><br><span class="line">let g:ycm_autoclose_preview_window_after_completion&#x3D;1</span><br><span class="line">&quot; 禁止缓存匹配项,每次都重新生成匹配项&quot;</span><br><span class="line">let g:ycm_cache_omnifunc&#x3D;0</span><br><span class="line">&quot;字符串中也开启补全&quot;</span><br><span class="line">let g:ycm_complete_in_strings &#x3D; 1</span><br><span class="line">&quot;离开插入模式后自动关闭预览窗口&quot;</span><br><span class="line">autocmd InsertLeave * if pumvisible() &#x3D;&#x3D; 0|pclose|endif</span><br><span class="line"></span><br><span class="line">&quot;回车即选中当前项&quot;</span><br><span class="line">&quot;inoremap &lt;expr&gt; &lt;CR&gt;       pumvisible() ? &#39;&lt;C-y&gt;&#39; : &#39;\&lt;CR&gt;&#39;</span><br><span class="line">&quot;上下左右键行为&quot;</span><br><span class="line">inoremap &lt;expr&gt; &lt;Down&gt;     pumvisible() ? &#39;\&lt;C-n&gt;&#39; : &#39;\&lt;Down&gt;&#39;</span><br><span class="line">inoremap &lt;expr&gt; &lt;Up&gt;       pumvisible() ? &#39;\&lt;C-p&gt;&#39; : &#39;\&lt;Up&gt;&#39;</span><br><span class="line">inoremap &lt;expr&gt; &lt;PageDown&gt; pumvisible() ? &#39;\&lt;PageDown&gt;\&lt;C-p&gt;\&lt;C-n&gt;&#39; : &#39;\&lt;PageDown&gt;&#39;</span><br><span class="line">inoremap &lt;expr&gt; &lt;PageUp&gt;   pumvisible() ? &#39;\&lt;PageUp&gt;\&lt;C-p&gt;\&lt;C-n&gt;&#39; : &#39;\&lt;PageUp&gt;&#39;</span><br><span class="line"></span><br><span class="line">&quot;F2开启和关闭树&quot;</span><br><span class="line">map &lt;F2&gt; :NERDTreeToggle&lt;CR&gt;</span><br><span class="line">let NERDTreeChDirMode&#x3D;1</span><br><span class="line">&quot;显示书签&quot;</span><br><span class="line">let NERDTreeShowBookmarks&#x3D;1</span><br><span class="line">&quot;设置忽略文件类型&quot;</span><br><span class="line">let NERDTreeIgnore&#x3D;[&#39;\~$&#39;, &#39;\.pyc$&#39;, &#39;\.swp$&#39;]</span><br><span class="line">&quot;窗口大小&quot;</span><br><span class="line">let NERDTreeWinSize&#x3D;25</span><br><span class="line"></span><br><span class="line">&quot;split navigations</span><br><span class="line">nnoremap &lt;C-J&gt; &lt;C-W&gt;&lt;C-J&gt;</span><br><span class="line">nnoremap &lt;C-K&gt; &lt;C-W&gt;&lt;C-K&gt;</span><br><span class="line">nnoremap &lt;C-L&gt; &lt;C-W&gt;&lt;C-L&gt;</span><br><span class="line">nnoremap &lt;C-H&gt; &lt;C-W&gt;&lt;C-H&gt;</span><br><span class="line"></span><br><span class="line">&quot;缩进指示线&quot;</span><br><span class="line">let g:indentLine_char&#x3D;&#39;┆&#39;</span><br><span class="line">let g:indentLine_enabled &#x3D; 1</span><br><span class="line"></span><br><span class="line">&quot;autopep8设置&quot;</span><br><span class="line">let g:autopep8_disable_show_diff&#x3D;1</span><br><span class="line"></span><br><span class="line">let mapleader&#x3D;&#39;,&#39;</span><br><span class="line"></span><br><span class="line">map &lt;F4&gt; &lt;leader&gt;ci &lt;CR&gt;</span><br></pre></td></tr></table></figure></li>
+<li><p>在用户主目录下新建一个 .vim 文件夹，并将插件包解压缩至该文件夹</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir ~&#x2F;.vim</span><br><span class="line">$ tar -jxv -f bundle.tar.bz2 -C ~&#x2F;.vim</span><br></pre></td></tr></table></figure>
+<p>到这里，除了自动补全的插件 YouCompleteMe ，其实大部分的插件都已经起作用了，我们的插件包有几百兆主要就是因为 YouCompleteMe 这个插件比较大，这也是因为这个插件的功能太强大了，这个插件在下载完成后还需要编译安装，接下来就来完成这个步骤。</p>
+</li>
+<li><p>安装 python 和 python 库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt install python python-dev</span><br></pre></td></tr></table></figure>
+<p>这一步没有完成在安装的时候可能会碰到下面的问题：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">WARNING: this script is deprecated. Use the install.py script instead.</span><br><span class="line">Searching Python 2.7 libraries...</span><br><span class="line">ERROR: unable to find an appropriate Python library.</span><br></pre></td></tr></table></figure></li>
+<li><p>安装编译环境</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt install cmake gcc build-essential</span><br></pre></td></tr></table></figure>
+<p>未完成这步可能会遇到的问题：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">WARNING: this script is deprecated. Use the install.py script instead.</span><br><span class="line">ERROR: Unable to find executable &#39;cmake&#39;. CMake is required to build ycmd</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">No CMAKE_CXX_COMPILER could be found.</span><br></pre></td></tr></table></figure></li>
+<li><p>执行 YouCompleteMe 安装脚本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cd ~&#x2F;.vim&#x2F;bundle&#x2F;YouCompleteMe</span><br><span class="line">$ .&#x2F;install.sh</span><br></pre></td></tr></table></figure>
+<p>完成上面的过程就实现了 YouCompleteMe 的安装，接下来就可以体验 vim 强大的功能啦！</p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>原创技术分享，您的支持将鼓励我继续创作</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.png" alt="WooOh 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="WooOh 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>WooOh
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://caohuilong.github.io/2018/08/23/%E8%BF%81%E7%A7%BBvim-python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" title="迁移vim-python开发环境">http://caohuilong.github.io/2018/08/23/迁移vim-python开发环境/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"><i class="fa fa-tag"></i> python</a>
+              <a href="/tags/vim/" rel="tag"><i class="fa fa-tag"></i> vim</a>
+              <a href="/tags/YouCompleteMe/" rel="tag"><i class="fa fa-tag"></i> YouCompleteMe</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/08/21/ubuntu%E9%85%8D%E7%BD%AEshadowsocks%E5%AE%A2%E6%88%B7%E7%AB%AF/" rel="prev" title="Ubuntu 配置 shadowsocks 客户端">
+                  <i class="fa fa-chevron-left"></i> Ubuntu 配置 shadowsocks 客户端
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/08/26/Fabric%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/" rel="next" title="Hyperledger fabric v1.0.0 环境部署过程">
+                  Hyperledger fabric v1.0.0 环境部署过程 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">WooOh</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">211k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:11</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div><script color="120,120,120" opacity="0.5" zIndex="-1" count="150" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"DGWyhEv7cF9n6xMxtalVTAG0-gzGzoHsz","appKey":"euXiOFwqDNLAWiPiCgXWWUQ8","serverURLs":"dgwyhev7.lc-cn-n1-shared.com","placeholder":"留下你的爪印","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"recordIP":false,"enableQQ":false,"requiredFields":[]}, {
+      el: '#valine-comments',
+      path: "/2018/08/23/%E8%BF%81%E7%A7%BBvim-python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/",
+      serverURLs: "dgwyhev7.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

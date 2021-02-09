@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-my.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-my.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-my.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"caohuilong.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.2.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+<meta name="description" content="概述这篇文章记录的是按照官方文档在KVM环境下部署双节点openstack过程中，前期准备KVM环境和网络配置相关的内容，在完成这篇博客涉及到的工作之后就可以按照官方文档手动安装openstack了。本文涉及的主要工作，首先是在服务器的ubuntu 16.04 desktop版系统上搭建kvm环境，然后在服务器上安装VNC远程桌面，最后在KVM环境中开启两台虚拟机，分别两张网卡，第一张网卡使用桥接">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KVM虚拟机部署openstack的网络配置">
+<meta property="og:url" content="http://caohuilong.github.io/2017/12/03/KVM%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%83%A8%E7%BD%B2openstack%E7%9A%84%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/index.html">
+<meta property="og:site_name" content="WooOh&#39;s blog">
+<meta property="og:description" content="概述这篇文章记录的是按照官方文档在KVM环境下部署双节点openstack过程中，前期准备KVM环境和网络配置相关的内容，在完成这篇博客涉及到的工作之后就可以按照官方文档手动安装openstack了。本文涉及的主要工作，首先是在服务器的ubuntu 16.04 desktop版系统上搭建kvm环境，然后在服务器上安装VNC远程桌面，最后在KVM环境中开启两台虚拟机，分别两张网卡，第一张网卡使用桥接">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/cao0507/Pictures/master/blog/infocpu.png">
+<meta property="og:image" content="https://img-blog.csdn.net/20171201233200479">
+<meta property="og:image" content="https://raw.githubusercontent.com/cao0507/Pictures/master/blog/openstack%20network.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/cao0507/Pictures/master/blog/%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F%E7%BD%91%E5%8D%A1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/cao0507/Pictures/master/blog/NAT%E7%BD%91%E5%8D%A1.png">
+<meta property="article:published_time" content="2017-12-03T04:34:35.000Z">
+<meta property="article:modified_time" content="2020-09-25T01:16:16.893Z">
+<meta property="article:author" content="WooOh">
+<meta property="article:tag" content="KVM">
+<meta property="article:tag" content="Openstack">
+<meta property="article:tag" content="vnc">
+<meta property="article:tag" content="ubuntu">
+<meta property="article:tag" content="Virtual Machine">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/cao0507/Pictures/master/blog/infocpu.png">
+
+
+<link rel="canonical" href="http://caohuilong.github.io/2017/12/03/KVM%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%83%A8%E7%BD%B2openstack%E7%9A%84%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>KVM虚拟机部署openstack的网络配置 | WooOh's blog</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="WooOh's blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">WooOh's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">愿所有的等待，终能遇见幸福</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">60</span></a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">16</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">41</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%90%AD%E5%BB%BAKVM%E7%8E%AF%E5%A2%83"><span class="nav-number">2.</span> <span class="nav-text">服务器搭建KVM环境</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8BCPU%E6%98%AF%E5%90%A6%E6%94%AF%E6%8C%81KVM"><span class="nav-number">2.1.</span> <span class="nav-text">查看CPU是否支持KVM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85KVM%E5%8F%8A%E7%9B%B8%E5%85%B3%E4%BE%9D%E8%B5%96%E5%8C%85"><span class="nav-number">2.2.</span> <span class="nav-text">安装KVM及相关依赖包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E7%94%A8%E6%A1%A5%E6%8E%A5%E7%BD%91%E7%BB%9C"><span class="nav-number">2.3.</span> <span class="nav-text">启用桥接网络</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E6%89%8B%E5%8A%A8%E9%85%8D%E7%BD%AE"><span class="nav-number">2.3.1.</span> <span class="nav-text">通过手动配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E9%85%8D%E7%BD%AE"><span class="nav-number">2.3.2.</span> <span class="nav-text">通过修改文件配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9virbr0%E7%9A%84%E7%BD%91%E6%AE%B5"><span class="nav-number">2.4.</span> <span class="nav-text">修改virbr0的网段</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%89%E8%A3%85VNC%E8%BF%9C%E7%A8%8B%E6%A1%8C%E9%9D%A2"><span class="nav-number">3.</span> <span class="nav-text">服务器安装VNC远程桌面</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85x11VNC%E8%BD%AF%E4%BB%B6%E5%8C%85"><span class="nav-number">3.1.</span> <span class="nav-text">安装x11VNC软件包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E8%AE%BF%E9%97%AE%E5%AF%86%E7%A0%81"><span class="nav-number">3.2.</span> <span class="nav-text">配置访问密码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%9C%8D%E5%8A%A1"><span class="nav-number">3.3.</span> <span class="nav-text">创建服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E9%98%B2%E7%81%AB%E5%A2%99%EF%BC%8C%E9%85%8D%E7%BD%AE%E5%92%8C%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1"><span class="nav-number">3.4.</span> <span class="nav-text">配置防火墙，配置和启动服务</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAVM%E5%B9%B6%E9%85%8D%E7%BD%AE%E7%9B%B8%E5%85%B3%E4%BF%A1%E6%81%AF"><span class="nav-number">4.</span> <span class="nav-text">创建VM并配置相关信息</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%89%E7%85%A7Openstack%E5%AE%98%E7%BD%91%E5%AE%89%E8%A3%85%E6%96%87%E6%A1%A3%E7%9A%84%E4%B8%BB%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE%E4%B8%A4%E5%8F%B0%E8%99%9A%E6%8B%9F%E6%9C%BAController%E5%92%8CCompute"><span class="nav-number">4.1.</span> <span class="nav-text">按照Openstack官网安装文档的主机网络配置两台虚拟机Controller和Compute</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="WooOh"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">WooOh</p>
+  <div class="site-description" itemprop="description">学着去分享</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/caohuilong" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;caohuilong" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:cao130507@163.com" title="E-Mail → mailto:cao130507@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/cao0507" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;cao0507" rel="noopener" target="_blank"><i class="fa fa-codiepie fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+
+    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=360 height=86 src="//music.163.com/outchain/player?type=2&id=2919622&auto=1&height=66"></iframe>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://caohuilong.github.io/2017/12/03/KVM%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%83%A8%E7%BD%B2openstack%E7%9A%84%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="WooOh">
+      <meta itemprop="description" content="学着去分享">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WooOh's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          KVM虚拟机部署openstack的网络配置
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-12-03 12:34:35" itemprop="dateCreated datePublished" datetime="2017-12-03T12:34:35+08:00">2017-12-03</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-09-25 09:16:16" itemprop="dateModified" datetime="2020-09-25T09:16:16+08:00">2020-09-25</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/KVM/" itemprop="url" rel="index"><span itemprop="name">KVM</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span id="/2017/12/03/KVM%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%83%A8%E7%BD%B2openstack%E7%9A%84%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/" class="post-meta-item leancloud_visitors" data-flag-title="KVM虚拟机部署openstack的网络配置" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>这篇文章记录的是按照官方文档在<strong>KVM环境</strong>下部署<strong>双节点openstack</strong>过程中，前期准备KVM环境和网络配置相关的内容，在完成这篇博客涉及到的工作之后就可以按照官方文档手动安装openstack了。本文涉及的主要工作，首先是在服务器的<strong>ubuntu 16.04 desktop版</strong>系统上搭建kvm环境，然后在服务器上安装VNC远程桌面，最后在KVM环境中开启两台虚拟机，分别两张网卡，第一张网卡使用<strong>桥接模式</strong>，第二张网卡使用<strong>NAT模式</strong>。下面开始介绍一下这个过程。</p>
+<a id="more"></a>
+
+<h1 id="服务器搭建KVM环境"><a href="#服务器搭建KVM环境" class="headerlink" title="服务器搭建KVM环境"></a>服务器搭建KVM环境</h1><h2 id="查看CPU是否支持KVM"><a href="#查看CPU是否支持KVM" class="headerlink" title="查看CPU是否支持KVM"></a>查看CPU是否支持KVM</h2><p><code>$ egrep -c &quot;(svm|vmx)&quot; /proc/cpuinfo</code></p>
+<p>输出结果大于0证明CPU支持KVM虚拟化 </p>
+<p><img src="https://raw.githubusercontent.com/cao0507/Pictures/master/blog/infocpu.png" alt="虚拟CPU个数"></p>
+<h2 id="安装KVM及相关依赖包"><a href="#安装KVM及相关依赖包" class="headerlink" title="安装KVM及相关依赖包"></a>安装KVM及相关依赖包</h2><p><code>$ sudo apt-get install qemu-kvm qemu virt-manager virt-viewer libvirt-bin bridge-utils</code></p>
+<h2 id="启用桥接网络"><a href="#启用桥接网络" class="headerlink" title="启用桥接网络"></a>启用桥接网络</h2><p>在服务器上启用桥接网络需要配置一个桥接设备br0，配置br0有两种方式，通过手动配置和通过修改文件配置。 </p>
+<h3 id="通过手动配置"><a href="#通过手动配置" class="headerlink" title="通过手动配置"></a>通过手动配置</h3><ul>
+<li><p>创建br0网桥</p>
+<p> <code># brctl addbr br0</code></p>
+</li>
+<li><p>将eth0网卡添加到br0上，此时可能会断网</p>
+<p><code># brctl addif br0 eth0</code></p>
+</li>
+<li><p>删除eth0上的IP地址</p>
+<p><code># ip addr del dev eth0 192.168.1.25/24 </code></p>
+</li>
+<li><p>配置br0的IP地址并启动br0网桥设备</p>
+<p><code># ifconfig br0 192.168.1.25/24 up</code></p>
+</li>
+<li><p>重新加入默认网关</p>
+<p><code># route add default gw 192.168.1.1</code></p>
+</li>
+<li><p>查看配置是否生效 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># route     &#x2F;&#x2F;查看默认网关，输出结果如下</span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination             Gateway             Genmask         Flags     Metric      Ref    Use     Iface</span><br><span class="line">default              192.168.1.1             0.0.0.0          UG        0          0      0        br0</span><br><span class="line">192.168.1.0             *                 255.255.255.0       U         0          0      0        br0</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"># ifconfig     &#x2F;&#x2F;查看eth0和br0的IP信息，输出结果如下，可以发现现在br0有IP而eth0没有IP了</span><br><span class="line">br0       Link encap:Ethernet  HWaddr 00:e0:81:e2:3c:3d  </span><br><span class="line">          inet addr:192.168.1.25  Bcast:192.168.1.255  Mask:255.255.255.0</span><br><span class="line">          inet6 addr: fe80::2e0:81ff:fee2:3c3d&#x2F;64 Scope:Link</span><br><span class="line">          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1</span><br><span class="line">          RX packets:1316822 errors:0 dropped:5787 overruns:0 frame:0</span><br><span class="line">          TX packets:365475 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:1000</span><br><span class="line">          RX bytes:581279124 (581.2 MB)  TX bytes:562586852 (562.5 MB)</span><br><span class="line"> </span><br><span class="line">eth0      Link encap:Ethernet  HWaddr 00:e0:81:e2:3c:3d  </span><br><span class="line">          inet6 addr: fe80::2e0:81ff:fee2:3c3d&#x2F;64 Scope:Link</span><br><span class="line">          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1</span><br><span class="line">          RX packets:6671034 errors:0 dropped:9627 overruns:0 frame:0</span><br><span class="line">          TX packets:840972 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:1000</span><br><span class="line">          RX bytes:1346523816 (1.3 GB)  TX bytes:614510541 (614.5 MB)</span><br><span class="line">          Memory:dfb80000-dfbfffff</span><br><span class="line"> </span><br><span class="line">lo        Link encap:Local Loopback  </span><br><span class="line">          inet addr:127.0.0.1  Mask:255.0.0.0</span><br><span class="line">          inet6 addr: ::1&#x2F;128 Scope:Host</span><br><span class="line">          UP LOOPBACK RUNNING  MTU:65536  Metric:1</span><br><span class="line">          RX packets:1450290 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:1450290 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:1000</span><br><span class="line">          RX bytes:24027042487 (24.0 GB)  TX bytes:24027042487 (24.0 GB)</span><br></pre></td></tr></table></figure>
+<p>这就是通过手动来配置桥接设备br0的方法，这种方法在配置好之后马上就生效了，但是在系统重启之后这些配置信息都会被清除，要想使配置永久生效则需要修改网络配置文件，也就是下面的方法。 </p>
+</li>
+</ul>
+<h3 id="通过修改文件配置"><a href="#通过修改文件配置" class="headerlink" title="通过修改文件配置"></a>通过修改文件配置</h3><ul>
+<li><p>修改前先将网络配置文件进行备份</p>
+<p><code># cp  /etc/network/interfaces  /etc/network/interfaces.bak</code></p>
+</li>
+<li><p>修改网络配置文件<code>/etc/network/interfaces</code></p>
+<p><code># vi  /etc/network/interfaces    //修改结果如下</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">auto lo</span><br><span class="line">iface lo inet loopback</span><br><span class="line"> </span><br><span class="line"># Enabing Bridge networking br0 interface</span><br><span class="line">auto br0</span><br><span class="line">iface br0 inet static</span><br><span class="line">address 192.168.1.25</span><br><span class="line">network 192.168.1.0</span><br><span class="line">netmask 255.255.255.0</span><br><span class="line">broadcast 192.168.1.255</span><br><span class="line">gateway 192.168.1.1</span><br><span class="line">dns-nameservers 223.5.5.5</span><br><span class="line">bridge_ports eth0</span><br><span class="line">bridge_stp off</span><br></pre></td></tr></table></figure>
+<p>保存后退出，关机重启中配置文件就生效了。这种方法只需要修改配置文件然后重启就可以，比较简单，而且是永久生效，比较符合我们的需求，因为我们的虚拟机通过桥接模式连接外网的话都是连接到br0上的。 </p>
+</li>
+</ul>
+<h2 id="修改virbr0的网段"><a href="#修改virbr0的网段" class="headerlink" title="修改virbr0的网段"></a>修改virbr0的网段</h2><p>在服务器上安装好虚拟化软件后，KVM会自动生成一个<code>virbr0</code>的桥接设备，它的作用是为连接其上的虚拟网卡提供NAT访问外网的功能，并提供DHCP服务。<code>virbr0</code>默认分配的IP是<code>192.168.122.1</code>，使用 <code>ifconfig</code> 命令查看得<code>virbr0</code>的信息如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$  ifconfig</span><br><span class="line">……</span><br><span class="line"> </span><br><span class="line">virbr0    Link encap:Ethernet  HWaddr 52:54:00:f8:70:e3  </span><br><span class="line">          inet addr:192.168.122.1  Bcast:192.168.122.255  Mask:255.255.255.0</span><br><span class="line">          UP BROADCAST MULTICAST  MTU:1500  Metric:1</span><br><span class="line">          RX packets:0 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:1000</span><br><span class="line">          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)</span><br></pre></td></tr></table></figure>
+<p> 在这种情况下，连接到virbr0上的虚拟机的虚拟网卡也是在192.168.122.0网段上的，如果让连接到virbr0上的虚拟网卡在自定义的网段上就需要修改virbr0的网段，修改方法如下： </p>
+<p><code># virsh  net-edit  default</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;network&gt;</span><br><span class="line">  &lt;name&gt;default&lt;&#x2F;name&gt;</span><br><span class="line">  &lt;uuid&gt;91cc230a-bf53-487c-b296-10323705d7e8&lt;&#x2F;uuid&gt;</span><br><span class="line">  &lt;forward mode&#x3D;&#39;nat&#39;&#x2F;&gt;</span><br><span class="line">  &lt;bridge name&#x3D;&#39;virbr0&#39; stp&#x3D;&#39;on&#39; delay&#x3D;&#39;0&#39;&#x2F;&gt;</span><br><span class="line">  &lt;mac address&#x3D;&#39;52:54:00:f8:70:e3&#39;&#x2F;&gt;</span><br><span class="line">  &lt;ip address&#x3D;&#39;10.0.0.1&#39; netmask&#x3D;&#39;255.255.255.0&#39;&gt;</span><br><span class="line">    &lt;dhcp&gt;</span><br><span class="line">      &lt;range start&#x3D;&#39;10.0.0.2&#39; end&#x3D;&#39;10.0.0.254&#39;&#x2F;&gt;</span><br><span class="line">    &lt;&#x2F;dhcp&gt;</span><br><span class="line">  &lt;&#x2F;ip&gt;</span><br><span class="line">&lt;&#x2F;network&gt;</span><br></pre></td></tr></table></figure>
+<p>这样就将<code>virbr0</code>的网段改成<code>10.0.0.0/24</code>，连接到<code>virbr0</code>的虚拟网卡的IP将会在<code>10.0.0.2/24 - 10.0.0.254/24</code>范围内自动分配一个。如果有需要可以自己手动给虚拟网卡配置IP并写到配置文件中去。 </p>
+<h1 id="服务器安装VNC远程桌面"><a href="#服务器安装VNC远程桌面" class="headerlink" title="服务器安装VNC远程桌面"></a>服务器安装VNC远程桌面</h1><p>因为服务器上安装的<code>Ubuntu 16.04 LTS  desktop</code>版的系统，在后续的工作中需要远程登录到服务器，虽然可以通过SSH远程管理服务器，但是可视化的界面往往会给新手用户提供很大的便利，所以可以在服务器上安装VNC。开始在服务器上安装VNC试过很多方法，VNC服务器端也有多种选择，如<code>VNC4server</code>、<code>tigervncserver</code>，感觉很麻烦，而且还不一定能安装成功，我安装的VNC服务器端是<code>x11VNC</code>，按照步骤可以很顺利地完成安装，步骤如下： </p>
+<h2 id="安装x11VNC软件包"><a href="#安装x11VNC软件包" class="headerlink" title="安装x11VNC软件包"></a>安装x11VNC软件包</h2><p><code>$ sudo  apt-get  install  x11vnc</code></p>
+<h2 id="配置访问密码"><a href="#配置访问密码" class="headerlink" title="配置访问密码"></a>配置访问密码</h2><p><code>$ sudo  x11vnc  -storepasswd  /etc/x11vnc.pass</code></p>
+<h2 id="创建服务"><a href="#创建服务" class="headerlink" title="创建服务"></a>创建服务</h2><p><code># vi  /lib/systemd/system/x11vnc.service      //粘贴一下代码，最后:wq 保存，请使用root用户，否则没有权限</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description&#x3D;Start x11vnc at startup.</span><br><span class="line">After&#x3D;multi-user.target</span><br><span class="line">[Service]</span><br><span class="line">Type&#x3D;simple</span><br><span class="line">ExecStart&#x3D;&#x2F;usr&#x2F;bin&#x2F;x11vnc -auth guess -forever -loop -noxdamage -repeat -rfbauth &#x2F;etc&#x2F;x11vnc.pass -rfbport 5900 -shared</span><br><span class="line">[Install]</span><br><span class="line">WantedBy&#x3D;multi-user.target</span><br></pre></td></tr></table></figure>
+<h2 id="配置防火墙，配置和启动服务"><a href="#配置防火墙，配置和启动服务" class="headerlink" title="配置防火墙，配置和启动服务"></a>配置防火墙，配置和启动服务</h2><p><code># ufw allow 5900</code></p>
+<p><code># systemctl enable x11vnc.service</code></p>
+<p><code># systemctl daemon-reload</code></p>
+<p><code># systemctl start x11vnc.service</code></p>
+<p>完成这四个步骤然后重启就可以了。（这个VNC的安装过程可以参考<a target="_blank" rel="noopener" href="http://blog.csdn.net/longhr/article/details/51657610%EF%BC%89">http://blog.csdn.net/longhr/article/details/51657610）</a> </p>
+<p>最后在你自己的电脑需要有一个vnc viewer的软件，可以在这里下载（链接：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1o8kPqXG">https://pan.baidu.com/s/1o8kPqXG</a> 密码：v5r2） </p>
+<h1 id="创建VM并配置相关信息"><a href="#创建VM并配置相关信息" class="headerlink" title="创建VM并配置相关信息"></a>创建VM并配置相关信息</h1><p>在安装好VNC后就可以登录服务器的远程桌面，打开一个terminal，在terminal中输入下面的命令可以打开Virtual Machine  Manager（注意，使用SSH远程登录服务器是无法打开virt-manager的界面的，一定要在登录了远程桌面后才能打开界面）</p>
+<p><img src="https://img-blog.csdn.net/20171201233200479" alt="VMM"></p>
+<p>使用Virtual Machine Manager的界面可以很方便的创建虚拟机，当然也可以在命令行中使用命令创建虚拟机，这个我就不在这里说了。 </p>
+<h2 id="按照Openstack官网安装文档的主机网络配置两台虚拟机Controller和Compute"><a href="#按照Openstack官网安装文档的主机网络配置两台虚拟机Controller和Compute" class="headerlink" title="按照Openstack官网安装文档的主机网络配置两台虚拟机Controller和Compute"></a>按照Openstack官网安装文档的主机网络配置两台虚拟机Controller和Compute</h2><p><img src="https://raw.githubusercontent.com/cao0507/Pictures/master/blog/openstack%20network.png" alt="openstack network"></p>
+<p>控制节点和计算节点这两个虚拟机分别两张网卡，一张配置为桥接模式，另一张配置为NAT模式。创建虚拟机时默认是添加一张网卡的，后面可以在虚拟机的硬件信息中添加。两张虚拟网卡的配置信息如图： </p>
+<p><img src="https://raw.githubusercontent.com/cao0507/Pictures/master/blog/%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F%E7%BD%91%E5%8D%A1.png" alt="compute1"></p>
+<p>上图显示的是桥接模式网卡的配置信息，Network source选择为<code>Bridge br0：Host device eth0</code> </p>
+<p><img src="https://raw.githubusercontent.com/cao0507/Pictures/master/blog/NAT%E7%BD%91%E5%8D%A1.png" alt="NAT"></p>
+<p>上图显示的是NAT模式网卡的配置信息，Network source选择为<code>Virtual network ‘default’：NAT</code> </p>
+<p>这样按照官方文档部署双节点Openstack的前期准备工作就已经做完，后面就可以按照官方文档开始安装openstack了，祝你成功。附上官方文档链接<a target="_blank" rel="noopener" href="https://docs.openstack.org/ocata/zh_CN/install-guide-ubuntu/index.html">https://docs.openstack.org/ocata/zh_CN/install-guide-ubuntu/index.html</a> （注：这个是在ubuntu系统下安装Ocata版本Openstack中文文档） </p>
+<hr>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>原创技术分享，您的支持将鼓励我继续创作</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.png" alt="WooOh 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="WooOh 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>WooOh
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://caohuilong.github.io/2017/12/03/KVM%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%83%A8%E7%BD%B2openstack%E7%9A%84%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/" title="KVM虚拟机部署openstack的网络配置">http://caohuilong.github.io/2017/12/03/KVM虚拟机部署openstack的网络配置/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/KVM/" rel="tag"><i class="fa fa-tag"></i> KVM</a>
+              <a href="/tags/Openstack/" rel="tag"><i class="fa fa-tag"></i> Openstack</a>
+              <a href="/tags/vnc/" rel="tag"><i class="fa fa-tag"></i> vnc</a>
+              <a href="/tags/ubuntu/" rel="tag"><i class="fa fa-tag"></i> ubuntu</a>
+              <a href="/tags/Virtual-Machine/" rel="tag"><i class="fa fa-tag"></i> Virtual Machine</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/12/23/Openstack%E7%8E%AF%E5%A2%83%E4%B8%8B%E6%89%8B%E5%8A%A8%E5%AE%89%E8%A3%85Tacker/" rel="next" title="Openstack环境下手动安装Tacker">
+                  Openstack环境下手动安装Tacker <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">WooOh</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">211k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:11</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div><script color="120,120,120" opacity="0.5" zIndex="-1" count="150" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"DGWyhEv7cF9n6xMxtalVTAG0-gzGzoHsz","appKey":"euXiOFwqDNLAWiPiCgXWWUQ8","serverURLs":"dgwyhev7.lc-cn-n1-shared.com","placeholder":"留下你的爪印","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"recordIP":false,"enableQQ":false,"requiredFields":[]}, {
+      el: '#valine-comments',
+      path: "/2017/12/03/KVM%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%83%A8%E7%BD%B2openstack%E7%9A%84%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/",
+      serverURLs: "dgwyhev7.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

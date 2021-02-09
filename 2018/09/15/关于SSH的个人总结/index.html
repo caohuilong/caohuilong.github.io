@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-my.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-my.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-my.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"caohuilong.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.2.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+<meta name="description" content="目的在日常学习工作中，早已离不开远程的 Linux 服务器或虚拟机，每次都是借助 Xshell 中保存的用户密码方便的 ssh 登录，偶尔在配置环境中的时候用到了秘钥登录，但是从来没有总结一下相关的内容，每次有问题都是上网查，所以写下这篇个人经验总结的文章。本文将主要介绍 ssh 的安装， ssh 免密登录，允许 root 登录，ssh 登录的一些选项，ssh 登录本机等问题。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于 SSH 的个人总结">
+<meta property="og:url" content="http://caohuilong.github.io/2018/09/15/%E5%85%B3%E4%BA%8ESSH%E7%9A%84%E4%B8%AA%E4%BA%BA%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="WooOh&#39;s blog">
+<meta property="og:description" content="目的在日常学习工作中，早已离不开远程的 Linux 服务器或虚拟机，每次都是借助 Xshell 中保存的用户密码方便的 ssh 登录，偶尔在配置环境中的时候用到了秘钥登录，但是从来没有总结一下相关的内容，每次有问题都是上网查，所以写下这篇个人经验总结的文章。本文将主要介绍 ssh 的安装， ssh 免密登录，允许 root 登录，ssh 登录的一些选项，ssh 登录本机等问题。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-09-15T06:37:02.000Z">
+<meta property="article:modified_time" content="2020-09-25T01:16:16.898Z">
+<meta property="article:author" content="WooOh">
+<meta property="article:tag" content="SSH">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://caohuilong.github.io/2018/09/15/%E5%85%B3%E4%BA%8ESSH%E7%9A%84%E4%B8%AA%E4%BA%BA%E6%80%BB%E7%BB%93/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>关于 SSH 的个人总结 | WooOh's blog</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="WooOh's blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">WooOh's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">愿所有的等待，终能遇见幸福</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">60</span></a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">16</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">41</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84"><span class="nav-number">1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-ssh"><span class="nav-number">2.</span> <span class="nav-text">安装 ssh</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E-Debian-Ubuntu-%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">基于 Debian&#x2F;Ubuntu 系统</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E-RedHat-CentOS-%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.0.0.2.</span> <span class="nav-text">基于 RedHat&#x2F;CentOS 系统</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ssh-%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95"><span class="nav-number">3.</span> <span class="nav-text">ssh 免密登录</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E5%AE%9E%E7%8E%B0%E6%AD%A5%E9%AA%A4%EF%BC%9A"><span class="nav-number">3.0.0.1.</span> <span class="nav-text">快速实现步骤：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E%E5%A6%82%E4%B8%8B%EF%BC%9A"><span class="nav-number">3.0.0.2.</span> <span class="nav-text">说明如下：</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#root-%E7%94%A8%E6%88%B7%E7%99%BB%E5%BD%95"><span class="nav-number">4.</span> <span class="nav-text">root 用户登录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ssh-%E7%99%BB%E5%BD%95%E9%80%89%E9%A1%B9"><span class="nav-number">5.</span> <span class="nav-text">ssh 登录选项</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E6%97%A0%E9%80%89%E9%A1%B9%E5%8F%82%E6%95%B0%E8%BF%90%E8%A1%8C-ssh"><span class="nav-number">5.0.0.1.</span> <span class="nav-text">1. 无选项参数运行 ssh</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E6%8C%87%E5%AE%9A%E7%99%BB%E5%BD%95%E7%94%A8%E6%88%B7"><span class="nav-number">5.0.0.2.</span> <span class="nav-text">2. 指定登录用户</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E6%8C%87%E5%AE%9A%E7%AB%AF%E5%8F%A3"><span class="nav-number">5.0.0.3.</span> <span class="nav-text">3. 指定端口</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-%E7%BB%91%E5%AE%9A%E6%BA%90%E5%9C%B0%E5%9D%80"><span class="nav-number">5.0.0.4.</span> <span class="nav-text">4. 绑定源地址</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-%E5%85%AC%E9%92%A5%E6%A3%80%E6%9F%A5"><span class="nav-number">5.0.0.5.</span> <span class="nav-text">5. 公钥检查</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ssh-%E7%99%BB%E5%BD%95%E6%9C%AC%E6%9C%BA%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">6.</span> <span class="nav-text">ssh 登录本机的问题</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="WooOh"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">WooOh</p>
+  <div class="site-description" itemprop="description">学着去分享</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/caohuilong" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;caohuilong" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:cao130507@163.com" title="E-Mail → mailto:cao130507@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/cao0507" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;cao0507" rel="noopener" target="_blank"><i class="fa fa-codiepie fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+
+    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=360 height=86 src="//music.163.com/outchain/player?type=2&id=2919622&auto=1&height=66"></iframe>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://caohuilong.github.io/2018/09/15/%E5%85%B3%E4%BA%8ESSH%E7%9A%84%E4%B8%AA%E4%BA%BA%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="WooOh">
+      <meta itemprop="description" content="学着去分享">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WooOh's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          关于 SSH 的个人总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-09-15 14:37:02" itemprop="dateCreated datePublished" datetime="2018-09-15T14:37:02+08:00">2018-09-15</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-09-25 09:16:16" itemprop="dateModified" datetime="2020-09-25T09:16:16+08:00">2020-09-25</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span id="/2018/09/15/%E5%85%B3%E4%BA%8ESSH%E7%9A%84%E4%B8%AA%E4%BA%BA%E6%80%BB%E7%BB%93/" class="post-meta-item leancloud_visitors" data-flag-title="关于 SSH 的个人总结" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h2><p>在日常学习工作中，早已离不开远程的 Linux 服务器或虚拟机，每次都是借助 Xshell 中保存的用户密码方便的 ssh 登录，偶尔在配置环境中的时候用到了秘钥登录，但是从来没有总结一下相关的内容，每次有问题都是上网查，所以写下这篇个人经验总结的文章。本文将主要介绍 <u>ssh 的安装</u>， <u>ssh 免密登录</u>，<u>允许 root 登录</u>，<u>ssh 登录的一些选项</u>，<u>ssh 登录本机</u>等问题。</p>
+<a id="more"></a>
+
+<hr>
+<h2 id="安装-ssh"><a href="#安装-ssh" class="headerlink" title="安装 ssh"></a>安装 ssh</h2><h5 id="基于-Debian-Ubuntu-系统"><a href="#基于-Debian-Ubuntu-系统" class="headerlink" title="基于 Debian/Ubuntu 系统"></a>基于 Debian/Ubuntu 系统</h5><ul>
+<li><p>安装客户端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install openssh-client</span><br></pre></td></tr></table></figure></li>
+<li><p>安装服务端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install openssh-server</span><br></pre></td></tr></table></figure>
+<h5 id="基于-RedHat-CentOS-系统"><a href="#基于-RedHat-CentOS-系统" class="headerlink" title="基于 RedHat/CentOS 系统"></a>基于 RedHat/CentOS 系统</h5></li>
+<li><p>安装客户端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install openssh-clients</span><br></pre></td></tr></table></figure></li>
+<li><p>安装服务端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install openssh-server</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p> 关于客户端与服务端的区别就是：客户端用于你去登录别人，而服务端则是别人来登录你。</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h2 id="ssh-免密登录"><a href="#ssh-免密登录" class="headerlink" title="ssh 免密登录"></a>ssh 免密登录</h2><h5 id="快速实现步骤："><a href="#快速实现步骤：" class="headerlink" title="快速实现步骤："></a>快速实现步骤：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-keygen -t rsa</span><br><span class="line">$ ssh-copy-id -i ~&#x2F;.ssh&#x2F;id_rsa.pub username@xxx.xxx.xxx.xxx</span><br></pre></td></tr></table></figure>
+<h5 id="说明如下："><a href="#说明如下：" class="headerlink" title="说明如下："></a>说明如下：</h5><p>Linux系统有一个钥匙环(keyring)的管理程序。钥匙环受到用户登录密码的保护。当你登录Linux系统时，会自动解开钥匙环的密码，从而可访问钥匙环。SSH的密钥和公钥也存储在钥匙环。所以初次使用SSH密钥登录远程Linux服务器时需要输入一次SSH密钥的密码。而将来使用SSH密钥登录时不再输入密码。Ubuntu的钥匙环程序是seahorse。</p>
+<p>SSH密钥就好比是你的身份证明。远程Linux服务器用你生成的SSH公钥来加密一条消息，而只有你的SSH密钥可以解开这条消息。所以其他人如果没有你的SSH密钥，是无法解开加密消息的，从而也就无法登录你的Linux服务器。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-keygen -t rsa</span><br><span class="line">Generating public&#x2F;private rsa key pair.</span><br><span class="line">Enter file in which to save the key (&#x2F;home&#x2F;user1&#x2F;.ssh&#x2F;id_rsa): </span><br><span class="line">Enter passphrase (empty for no passphrase): </span><br><span class="line">Enter same passphrase again: </span><br><span class="line">Your identification has been saved in &#x2F;home&#x2F;user1&#x2F;.ssh&#x2F;id_rsa.</span><br><span class="line">Your public key has been saved in &#x2F;home&#x2F;user1&#x2F;.ssh&#x2F;id_rsa.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:BQeyB4pwfE1L7NAi7hjrTl5X814QW5Gu4dOZx0gIdng user1@ubuntu</span><br><span class="line">The key&#39;s randomart image is:</span><br><span class="line">+---[RSA 2048]----+</span><br><span class="line">|...  &#x3D;&#x3D; +....    |</span><br><span class="line">| oo.+o+O E ..    |</span><br><span class="line">| ..o.++ &#x3D;.+.     |</span><br><span class="line">|. .   .. ++o     |</span><br><span class="line">| &#x3D;     oSo&#x3D; &#x3D;    |</span><br><span class="line">|o .   . o+.&#x3D; o   |</span><br><span class="line">|.. . .   ....    |</span><br><span class="line">|o.. .   . .      |</span><br><span class="line">|.o       .       |</span><br><span class="line">+----[SHA256]-----+</span><br><span class="line"></span><br><span class="line">$ cd ~&#x2F;.ssh&#x2F;</span><br><span class="line">$ ls</span><br><span class="line">id_rsa  id_rsa.pub</span><br></pre></td></tr></table></figure>
+<p><code>ssh-copy-id</code> 工具可以把本地主机的公钥复制到远程主机的 authorized_keys 文件上，<code>ssh-copy-id</code> 命令也会给远程主机的用户主目录（home）和<code>~/.ssh</code>, 和<code>~/.ssh/authorized_keys</code>设置合适的权限。 </p>
+<ul>
+<li><p>语法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-copy-id [-i [identity_file]] [user@]machine</span><br></pre></td></tr></table></figure></li>
+<li><p>选项</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-i：指定公钥文件</span><br></pre></td></tr></table></figure></li>
+<li><p>实例</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-copy-id -i ~&#x2F;.ssh&#x2F;id_rsa.pub user1@192.168.1.158</span><br><span class="line"></span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;ssh-copy-id: INFO: Source of key(s) to be installed: &quot;&#x2F;home&#x2F;user1&#x2F;.ssh&#x2F;id_rsa.pub&quot;</span><br><span class="line">The authenticity of host &#39;192.168.1.158 (192.168.1.158)&#39; can&#39;t be established.</span><br><span class="line">ECDSA key fingerprint is SHA256:Gx0RFwV4EiROc6ymV&#x2F;BmSLE2zNT9AswZvzq9pc6Srwo.</span><br><span class="line">Are you sure you want to continue connecting (yes&#x2F;no)? yes</span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed</span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys</span><br><span class="line">user1@192.168.1.158&#39;s password: </span><br><span class="line"></span><br><span class="line">Number of key(s) added: 1</span><br><span class="line"></span><br><span class="line">Now try logging into the machine, with:   &quot;ssh &#39;user1@192.168.1.158&#39;&quot;</span><br><span class="line">and check to make sure that only the key(s) you wanted were added.</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<hr>
+<h2 id="root-用户登录"><a href="#root-用户登录" class="headerlink" title="root 用户登录"></a>root 用户登录</h2><p>在一些系统上，比如 ubuntu，root 用户是默认禁用的，也就是说通常不允许 root 账号通过网络登录。但是通过适当的配置可以允许 root 用户登录。</p>
+<ol>
+<li><p>设置 root 用户密码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo passwd root</span><br></pre></td></tr></table></figure></li>
+<li><p>允许 root 用户远程登录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># vi &#x2F;etc&#x2F;ssh&#x2F;sshd_config</span><br><span class="line">...</span><br><span class="line">PermitRootLogin yes   #取消注释</span><br><span class="line"></span><br><span class="line"># service sshd restart   #重启ssh服务</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<hr>
+<h2 id="ssh-登录选项"><a href="#ssh-登录选项" class="headerlink" title="ssh 登录选项"></a>ssh 登录选项</h2><h5 id="1-无选项参数运行-ssh"><a href="#1-无选项参数运行-ssh" class="headerlink" title="1. 无选项参数运行 ssh"></a>1. 无选项参数运行 ssh</h5><p>如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh 192.168.1.156</span><br></pre></td></tr></table></figure>
+<p>这会用你的用户名去 <code>192.168.1.156</code> 这台主机，相当于省略了。如果目标主机上没有和你的用户名同名的，则每次输入密码都是显示密码错误。</p>
+<h5 id="2-指定登录用户"><a href="#2-指定登录用户" class="headerlink" title="2. 指定登录用户"></a>2. 指定登录用户</h5><p>有如下两种方式指定用户名：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ssh -l user1 192.168.1.156</span><br><span class="line"></span><br><span class="line">ssh user1@192.168.1.156</span><br></pre></td></tr></table></figure>
+<h5 id="3-指定端口"><a href="#3-指定端口" class="headerlink" title="3. 指定端口"></a>3. 指定端口</h5><p>ssh 默认使用的端口号是 22。大多现代的 Linux 系统 22 端口都是开放的。如果你运行 ssh 程序而没有指定端口号，它直接就是通过 22 端口发送请求的。 当然也可以改变 ssh 的默认端口号，只需要修改 <code>/etc/ssh/sshd_config</code> 文件，找到此行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Port 22</span><br></pre></td></tr></table></figure>
+<p>修改成你想要的端口，如 1234。然后重启 ssh 服务：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service sshd restart</span><br></pre></td></tr></table></figure>
+<p>使用新的端口来访问 ssh 服务：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ssh -p 1234 user1@192.168.1.156</span><br><span class="line">或</span><br><span class="line">ssh -oPort&#x3D;1234 user1@192.168.1.156</span><br></pre></td></tr></table></figure>
+<h5 id="4-绑定源地址"><a href="#4-绑定源地址" class="headerlink" title="4. 绑定源地址"></a>4. 绑定源地址</h5><p>如果你的主机有多个 IP，如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$ ifconfig</span><br><span class="line">eth0      Link encap:Ethernet  HWaddr d0:94:66:52:07:57  </span><br><span class="line">          inet addr:192.168.1.10  Bcast:192.168.1.255  Mask:255.255.255.0</span><br><span class="line">          inet6 addr: fe80::d294:66ff:fe52:757&#x2F;64 Scope:Link</span><br><span class="line">          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1</span><br><span class="line">          RX packets:3217625896 errors:0 dropped:1996 overruns:0 frame:0</span><br><span class="line">          TX packets:3417264542 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:1000 </span><br><span class="line">          RX bytes:2364841876835 (2.3 TB)  TX bytes:2940832952714 (2.9 TB)</span><br><span class="line">          Memory:93300000-933fffff </span><br><span class="line"></span><br><span class="line">eth1      Link encap:Ethernet  HWaddr d0:94:66:52:07:58  </span><br><span class="line">          inet addr:192.168.1.20  Bcast:192.168.1.255  Mask:255.255.255.0</span><br><span class="line">          inet6 addr: fe80::d294:66ff:fe52:758&#x2F;64 Scope:Link</span><br><span class="line">          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1</span><br><span class="line">          RX packets:2387702 errors:0 dropped:2071 overruns:0 frame:0</span><br><span class="line">          TX packets:1052 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:1000 </span><br><span class="line">          RX bytes:275109861 (275.1 MB)  TX bytes:100254 (100.2 KB)</span><br><span class="line">          Memory:93200000-932fffff</span><br></pre></td></tr></table></figure>
+<p>有时，你可能想指定以某个 IP 来登录别的 Linux 主机，则可以使用 -b 选项来指定一个 IP地址。这个 IP 将会用作建立连接的源地址。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -b 192.168.1.20 user1@192.168.1.156</span><br></pre></td></tr></table></figure>
+<p>在服务端，可以使用 netstat 命令来检查 ssh 服务的连接建立情况。可以看到 IP 为 192.168.1.20 的连接已经建立。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ netstat |grep ssh</span><br><span class="line">tcp        0      0 192.168.1.156:ssh       192.168.1.20:43838      ESTABLISHED</span><br></pre></td></tr></table></figure>
+<h5 id="5-公钥检查"><a href="#5-公钥检查" class="headerlink" title="5. 公钥检查"></a>5. 公钥检查</h5><p><strong>什么是公钥检查：</strong></p>
+<p>ssh 连接远程主机时，会检查主机的公钥。如果是第一次该主机，会显示该主机的公钥摘要，提示用户是否信任该主机： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ ssh user1@192.168.1.57</span><br><span class="line">The authenticity of host &#39;192.168.1.57 (192.168.1.57)&#39; can&#39;t be established.</span><br><span class="line">ECDSA key fingerprint is SHA256:Gx0RFwV4EiROc6ymV&#x2F;BmSLE2zNT9AswZvzq9pc6Srwo.</span><br><span class="line">Are you sure you want to continue connecting (yes&#x2F;no)?</span><br></pre></td></tr></table></figure>
+<p>当选择接受，就会将该主机的公钥追加到文件 ~/.ssh/known_hosts 中。当再次连接该主机时，就不会再提示该问题了。  如果因为某种原因（服务器系统重装，服务器间IP地址交换，DHCP，虚拟机重建，中间人劫持），该IP地址的公钥改变了，当使用 SSH  连接的时候，会报错： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</span><br><span class="line">@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @</span><br><span class="line">@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</span><br><span class="line">IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!</span><br><span class="line">Someone could be eavesdropping on you right now (man-in-the-middle attack)!</span><br><span class="line">It is also possible that the RSA host key has just been changed.</span><br><span class="line">The fingerprint for the RSA key sent by the remote host is</span><br><span class="line">e9:0c:36:89:7f:3c:07:71:09:5a:9f:28:8c:44:e9:05.</span><br><span class="line">Please contact your system administrator.</span><br><span class="line">Add correct host key in &#x2F;home&#x2F;jiangxin&#x2F;.ssh&#x2F;known_hosts to get rid of this message.</span><br><span class="line">Offending key in &#x2F;home&#x2F;jiangxin&#x2F;.ssh&#x2F;known_hosts:81</span><br><span class="line">RSA host key for 192.168.0.110 has changed and you have requested strict checking.</span><br><span class="line">Host key verification failed.</span><br></pre></td></tr></table></figure>
+<p>上面的警告信息说的是：</p>
+<ul>
+<li>服务器公钥已经改变，新的公钥的摘要是：e9:0c:36:89:7f:3c:07:71:09:5a:9f:28:8c:44:e9:05.</li>
+<li>该服务器原来的公钥记录在文件 <code>~/.ssh/known_hosts</code> 中第 81 行。</li>
+</ul>
+<p>如果确认不是中间人劫持，需要连接到该服务器，怎么办呢？最简单的就是用 vi 打开 <code>~/.ssh/known_hosts</code> 文件，定位到 81 行，将该行删除。之后就可以使用 ssh 连接了。 </p>
+<blockquote>
+<p>我之前在项目中，基于 OpenStack 来搭建 SDN 网络时经常碰到上面的错误，因为经常会将一些云主机给删掉而将他们的 IP 分给新起的云主机。再用这个 IP 来登录新的主机时就会碰到这个问题，以前还不太明白咋回事，现在有种恍然大悟的感觉。</p>
+</blockquote>
+<p><strong>如何不进行公钥检查：</strong></p>
+<p>在首次连接服务器时，会弹出公钥确认的提示。这会导致某些自动化任务，由于初次连接服务器而导致自动化任务中断。或者由于  <code>~/.ssh/known_hosts</code> 文件内容清空，导致自动化任务中断。 SSH 客户端的 StrictHostKeyChecking  配置指令，可以实现当第一次连接服务器时，自动接受新的公钥。只需要修改 <code>/etc/ssh/ssh_config</code> 文件，包含下列语句： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Host *</span><br><span class="line">   StrictHostKeyChecking no</span><br></pre></td></tr></table></figure>
+<p>或者在 ssh 命令行中用 -o 参数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -o StrictHostKeyChecking&#x3D;no  user1@192.168.1.110</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>公钥检查确实很烦人，我以前在写自动化登录脚本时就觉得很棘手，导致自动化登录脚本经常出错。早知道是这个问题就好办多了，感觉写博客总结一下这些内容对于自己挺有帮助的。</p>
+</blockquote>
+<hr>
+<h2 id="ssh-登录本机的问题"><a href="#ssh-登录本机的问题" class="headerlink" title="ssh 登录本机的问题"></a>ssh 登录本机的问题</h2><p>不试不知道，一试才知道 ssh 登录本机其实和登录其他的主机是一样的，也需要输入密码验证，免密登录也需要将自己的公钥记录在 <code>~/.ssh/authorized_keys</code> 文件中。ssh 登录本机可以使用本机的任意一个 IP 或者也可以用回环地址 <code>127.0.0.1</code> 。</p>
+<hr>
+<p>完结。。以上内容就是个人在学习工作中关于 ssh 的一些总结，感觉里面的学问真的是太大了，写了这么多其实还有很多很多相关的知识是我不知道不清楚的，不过学习就是这样的，总是由浅入深，不可能一下子就把所有的弄明白，剩下的就以后再慢慢总结啦！</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>原创技术分享，您的支持将鼓励我继续创作</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.png" alt="WooOh 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="WooOh 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>WooOh
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://caohuilong.github.io/2018/09/15/%E5%85%B3%E4%BA%8ESSH%E7%9A%84%E4%B8%AA%E4%BA%BA%E6%80%BB%E7%BB%93/" title="关于 SSH 的个人总结">http://caohuilong.github.io/2018/09/15/关于SSH的个人总结/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/SSH/" rel="tag"><i class="fa fa-tag"></i> SSH</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/09/14/frp%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E5%AE%9E%E7%8E%B0ssh%E8%AE%BF%E9%97%AE%E5%86%85%E7%BD%91%E6%9C%BA%E5%99%A8/" rel="prev" title="frp 内网穿透实现 ssh 访问内网主机">
+                  <i class="fa fa-chevron-left"></i> frp 内网穿透实现 ssh 访问内网主机
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/09/18/%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%9E%E7%8E%B0frp%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/" rel="next" title="阿里云服务器实现 frp 内网穿透">
+                  阿里云服务器实现 frp 内网穿透 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">WooOh</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">211k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:11</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div><script color="120,120,120" opacity="0.5" zIndex="-1" count="150" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"DGWyhEv7cF9n6xMxtalVTAG0-gzGzoHsz","appKey":"euXiOFwqDNLAWiPiCgXWWUQ8","serverURLs":"dgwyhev7.lc-cn-n1-shared.com","placeholder":"留下你的爪印","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"recordIP":false,"enableQQ":false,"requiredFields":[]}, {
+      el: '#valine-comments',
+      path: "/2018/09/15/%E5%85%B3%E4%BA%8ESSH%E7%9A%84%E4%B8%AA%E4%BA%BA%E6%80%BB%E7%BB%93/",
+      serverURLs: "dgwyhev7.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
