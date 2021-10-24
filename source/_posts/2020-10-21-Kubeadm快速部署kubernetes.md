@@ -205,7 +205,7 @@ kubeadm join 10.0.0.3:6443 --token j91yvn.qvhw9t0n0nvjd9j7 \
 systemctl start kubelet
 ```
 
-## Node节点安装
+### Node节点安装
 
 ```shell
 systemctl start kubelet
@@ -214,7 +214,7 @@ kubeadm join 10.0.0.3:6443 --token j91yvn.qvhw9t0n0nvjd9j7 \
     --discovery-token-ca-cert-hash sha256:68f5132eed6c9a9f1dc59cd304220542e4635dbf629cc789d0d0e0b91bb909cd
 ```
 
-## 安装calico
+### 安装calico
 
 master与node节点安装好之后，获取一下节点信息：
 
@@ -222,7 +222,7 @@ master与node节点安装好之后，获取一下节点信息：
 kubectl get nodes
 ```
 
-![node notReady](2020-10-21-Kubeadm快速部署kubernetes\nodes_not_ready.png)
+![node notReady](2020-10-21-Kubeadm快速部署kubernetes/nodes_not_ready.png)
 
 可以看到master节点与node1节点都处于NotReady状态。查看kubelet的状态：
 
@@ -230,7 +230,7 @@ kubectl get nodes
 systemctl status kubelet
 ```
 
-![systemctl status kubelet](2020-10-21-Kubeadm快速部署kubernetes\systemctl status kubelet.png)
+![systemctl status kubelet](2020-10-21-Kubeadm快速部署kubernetes/systemctl_status_kubelet.png)
 
  `No networks found in /etc/cni/net.d` 这行错误信息表示节点没有CNI网络插件，这是因为kubeadm目标是在不安装其他功能插件的基础上，建立一个通过Kubernetes一致性测试Kubernetes Conformance tests的最小可行集群。它在设计上并不会安装网络解决方案，而是需要用户自行安装第三方符合CNI的网络解决方案（如：flannel，calico，weave network等）。
 
@@ -246,10 +246,10 @@ kubectl apply -f calico.yaml
 
 安装好calico相关组件之后，再次查看节点状态变为Ready：
 
-![node ready](2020-10-21-Kubeadm快速部署kubernetes\nodes_ready.png)
+![node ready](2020-10-21-Kubeadm快速部署kubernetes/nodes_ready.png)
 
 再查看基础应用：
 
-![system pod](2020-10-21-Kubeadm快速部署kubernetes\pods.png)
+![system pod](2020-10-21-Kubeadm快速部署kubernetes/pods.png)
 
 到此，一个kubenetes集群就搭建完毕，可以在该集群上创建deployment部署应用，创建service暴露服务了。
