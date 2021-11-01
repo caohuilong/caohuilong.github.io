@@ -9,8 +9,6 @@ tags:
  - "镜像"
 ---
 
-# 概述
-
 目前有个 CentOS6.x 的系统镜像，默认支持 cloud-init-0.7.5 版本 rpm，但是 cloud-init-0.7.5 无法通过本地化 QEMU 利用 NoCloud 数据源进行 IP 地址管理，因此无法实现虚机的网络初始化，需要手动进行配置。经过测试实验，cloud-init 17 以上版本能够支持 NoCloud 数据源信息注入，但是 cloud-init 17 及以上版本需要 python2.7 或者 python3 才能运行，而 CentOS6.x 系统默认使用 python2.6。因此为了在 CentOS6.x 上安装 cloud-init 17 以上的版本，需要先升级 python2.7，然后再安装 cloud-init。
 
 <!--more-->
