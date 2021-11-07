@@ -23,12 +23,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"caohuilong.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.2.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
-<meta name="description" content="1. 基本二分查找二分查找或二分搜索（binary search），是一种在有序数组中查找某一特定元素的搜索算法。必须满足以下特征：  存储在数组中 有序排列">
+<meta name="description" content="二分查找或二分搜索（binary search），是一种在有序数组中查找某一特定元素的搜索算法。必须满足以下特征：  存储在数组中 有序排列   如果是用链表存储的，就无法应用二分查找了，因为链表不能通过下标随机访问其元素。  本文介绍基本的二分查找及其各种变体。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="二分查找算法总结">
 <meta property="og:url" content="http://caohuilong.github.io/2019/04/01/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/index.html">
 <meta property="og:site_name" content="WooOh&#39;s blog">
-<meta property="og:description" content="1. 基本二分查找二分查找或二分搜索（binary search），是一种在有序数组中查找某一特定元素的搜索算法。必须满足以下特征：  存储在数组中 有序排列">
+<meta property="og:description" content="二分查找或二分搜索（binary search），是一种在有序数组中查找某一特定元素的搜索算法。必须满足以下特征：  存储在数组中 有序排列   如果是用链表存储的，就无法应用二分查找了，因为链表不能通过下标随机访问其元素。  本文介绍基本的二分查找及其各种变体。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-04-01T05:51:32.000Z">
 <meta property="article:author" content="WooOh">
@@ -129,9 +129,9 @@
   <ul class="main-menu menu">
         <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
         <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
-        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">63</span></a></li>
-        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">16</span></a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">41</span></a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">65</span></a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">17</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">47</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -188,7 +188,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%9F%BA%E6%9C%AC%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE"><span class="nav-number">1.</span> <span class="nav-text">1. 基本二分查找</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%90%84%E7%A7%8D%E5%8F%98%E4%BD%93"><span class="nav-number">2.</span> <span class="nav-text">2. 各种变体</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%98%E4%BD%931%EF%BC%9A%E6%9F%A5%E6%89%BE%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%A4%A7%E4%BA%8Etarget%E7%9A%84%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE"><span class="nav-number">2.1.</span> <span class="nav-text">变体1：查找第一个大于target的元素位置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%98%E4%BD%932%EF%BC%9A%E6%9F%A5%E6%89%BE%E6%9C%80%E5%90%8E%E4%B8%80%E4%B8%AA%E5%B0%8F%E4%BA%8Etarget%E7%9A%84%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE"><span class="nav-number">2.2.</span> <span class="nav-text">变体2：查找最后一个小于target的元素位置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%98%E4%BD%933%EF%BC%9A%E6%9F%A5%E6%89%BE%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%A4%A7%E4%BA%8E%E7%AD%89%E4%BA%8Etarget%E7%9A%84%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE"><span class="nav-number">2.3.</span> <span class="nav-text">变体3：查找第一个大于等于target的元素位置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%98%E4%BD%934%EF%BC%9A%E6%9F%A5%E6%89%BE%E6%9C%80%E5%90%8E%E4%B8%80%E4%B8%AA%E5%B0%8F%E4%BA%8E%E7%AD%89%E4%BA%8Etarget%E7%9A%84%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE"><span class="nav-number">2.4.</span> <span class="nav-text">变体4：查找最后一个小于等于target的元素位置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%98%E4%BD%935%EF%BC%9A%E6%9F%A5%E6%89%BE%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%AD%89%E4%BA%8Etarget%E7%9A%84%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE"><span class="nav-number">2.5.</span> <span class="nav-text">变体5：查找第一个等于target的元素位置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%98%E4%BD%936%EF%BC%9A%E6%9F%A5%E6%89%BE%E6%9C%80%E5%90%8E%E4%B8%80%E4%B8%AA%E7%AD%89%E4%BA%8Etarget%E7%9A%84%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE"><span class="nav-number">2.6.</span> <span class="nav-text">变体6：查找最后一个等于target的元素位置</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">3. 总结</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%9F%BA%E6%9C%AC%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE"><span class="nav-number">1.</span> <span class="nav-text">1.基本二分查找</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%90%84%E7%A7%8D%E5%8F%98%E4%BD%93"><span class="nav-number">2.</span> <span class="nav-text">2. 各种变体</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%98%E4%BD%931%EF%BC%9A%E6%9F%A5%E6%89%BE%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%A4%A7%E4%BA%8Etarget%E7%9A%84%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE"><span class="nav-number">2.1.</span> <span class="nav-text">变体1：查找第一个大于target的元素位置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%98%E4%BD%932%EF%BC%9A%E6%9F%A5%E6%89%BE%E6%9C%80%E5%90%8E%E4%B8%80%E4%B8%AA%E5%B0%8F%E4%BA%8Etarget%E7%9A%84%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE"><span class="nav-number">2.2.</span> <span class="nav-text">变体2：查找最后一个小于target的元素位置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%98%E4%BD%933%EF%BC%9A%E6%9F%A5%E6%89%BE%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%A4%A7%E4%BA%8E%E7%AD%89%E4%BA%8Etarget%E7%9A%84%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE"><span class="nav-number">2.3.</span> <span class="nav-text">变体3：查找第一个大于等于target的元素位置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%98%E4%BD%934%EF%BC%9A%E6%9F%A5%E6%89%BE%E6%9C%80%E5%90%8E%E4%B8%80%E4%B8%AA%E5%B0%8F%E4%BA%8E%E7%AD%89%E4%BA%8Etarget%E7%9A%84%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE"><span class="nav-number">2.4.</span> <span class="nav-text">变体4：查找最后一个小于等于target的元素位置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%98%E4%BD%935%EF%BC%9A%E6%9F%A5%E6%89%BE%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%AD%89%E4%BA%8Etarget%E7%9A%84%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE"><span class="nav-number">2.5.</span> <span class="nav-text">变体5：查找第一个等于target的元素位置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%98%E4%BD%936%EF%BC%9A%E6%9F%A5%E6%89%BE%E6%9C%80%E5%90%8E%E4%B8%80%E4%B8%AA%E7%AD%89%E4%BA%8Etarget%E7%9A%84%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE"><span class="nav-number">2.6.</span> <span class="nav-text">变体6：查找最后一个等于target的元素位置</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">3. 总结</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -204,20 +204,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-count">47</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-count">17</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">63</span>
+        <span class="site-state-item-count">65</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -343,17 +343,18 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h4 id="1-基本二分查找"><a href="#1-基本二分查找" class="headerlink" title="1. 基本二分查找"></a>1. 基本二分查找</h4><p>二分查找或二分搜索（binary search），是一种在有序数组中查找某一特定元素的搜索算法。必须满足以下特征：</p>
+        <p>二分查找或二分搜索（binary search），是一种在有序数组中查找某一特定元素的搜索算法。必须满足以下特征：</p>
 <ul>
 <li>存储在数组中</li>
 <li>有序排列</li>
 </ul>
-<a id="more"></a>
-
 <blockquote>
 <p>如果是用链表存储的，就无法应用二分查找了，因为链表不能通过下标随机访问其元素。</p>
 </blockquote>
-<p>基本二分查找的搜索过程是从数组的中间元素开始，如果中间元素正好是要查找的元素，则搜索过程结束；如果中间元素大于目标值，则在数组小于中间元素的那一半中查找；如果中间元素小于目标值，则在数组大于中间元素的那一半查找。如果在某一步数组为空，则代表找不到。二分查找算法每一次比较都会使搜索范围缩小一半。</p>
+<p>本文介绍基本的二分查找及其各种变体。</p>
+<a id="more"></a>
+
+<h4 id="1-基本二分查找"><a href="#1-基本二分查找" class="headerlink" title="1.基本二分查找"></a>1.基本二分查找</h4><p>基本二分查找的搜索过程是从数组的中间元素开始，如果中间元素正好是要查找的元素，则搜索过程结束；如果中间元素大于目标值，则在数组小于中间元素的那一半中查找；如果中间元素小于目标值，则在数组大于中间元素的那一半查找。如果在某一步数组为空，则代表找不到。二分查找算法每一次比较都会使搜索范围缩小一半。</p>
 <p>基本二分查找的代码如下：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">basic_binary_search</span><span class="params">(<span class="keyword">const</span> <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> target)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.size()<span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">int</span> mid;</span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right)&#123;</span><br><span class="line">        mid = left + (right - left)/<span class="number">2</span>;</span><br><span class="line">        <span class="comment">//target在左边，改右边界</span></span><br><span class="line">        <span class="keyword">if</span> (target &lt; nums[mid])</span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        <span class="comment">//target在右边，改左边界</span></span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (target &gt; nums[mid])</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span> mid;</span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <hr>
@@ -496,8 +497,8 @@
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2020/12/09/CentOS6-5%E5%AE%89%E8%A3%85cloudinit-18/" rel="next" title="CentOS6.5安装cloudinit-18">
-                  CentOS6.5安装cloudinit-18 <i class="fa fa-chevron-right"></i>
+                <a href="/2020/08/06/redo%20log%E4%B8%8Ebin%20log%E7%9A%84%E4%B8%AA%E4%BA%BA%E7%90%86%E8%A7%A3/" rel="next" title="redo log与bin log的个人理解">
+                  redo log与bin log的个人理解 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -552,13 +553,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">216k</span>
+    <span title="站点总字数">229k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">3:17</span>
+    <span title="站点阅读时长">3:29</span>
   </span>
 </div>
 <div class="busuanzi-count">
