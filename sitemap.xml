@@ -23,23 +23,16 @@
   </url>
   
   <url>
-    <loc>http://caohuilong.github.io/2018/07/07/%E8%BF%9C%E7%A8%8B%E5%85%8D%E5%AF%86%E7%A0%81%E7%99%BB%E5%BD%95Openstack%E5%AE%9E%E4%BE%8B/</loc>
-    
-    <lastmod>2018-07-07</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://caohuilong.github.io/2018/07/09/%E8%87%AA%E5%8A%A8%E5%8C%96%E8%84%9A%E6%9C%AC%E4%B8%8E%E7%A8%8B%E5%BA%8F%E5%AE%9E%E7%8E%B0/</loc>
-    
-    <lastmod>2018-07-09</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://caohuilong.github.io/2018/07/21/%E5%85%B3%E4%BA%8EShell%E6%96%B0%E7%9A%84%E6%94%B6%E8%8E%B7/</loc>
     
     <lastmod>2018-07-21</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/2018/07/07/%E8%BF%9C%E7%A8%8B%E5%85%8D%E5%AF%86%E7%A0%81%E7%99%BB%E5%BD%95Openstack%E5%AE%9E%E4%BE%8B/</loc>
+    
+    <lastmod>2018-07-07</lastmod>
     
   </url>
   
@@ -51,9 +44,9 @@
   </url>
   
   <url>
-    <loc>http://caohuilong.github.io/2018/08/21/VPS%E6%90%AD%E5%BB%BAshadowsocks%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%B9%B6%E5%BC%80%E5%90%AFBBR%E5%8A%A0%E9%80%9F/</loc>
+    <loc>http://caohuilong.github.io/2018/07/09/%E8%87%AA%E5%8A%A8%E5%8C%96%E8%84%9A%E6%9C%AC%E4%B8%8E%E7%A8%8B%E5%BA%8F%E5%AE%9E%E7%8E%B0/</loc>
     
-    <lastmod>2018-08-21</lastmod>
+    <lastmod>2018-07-09</lastmod>
     
   </url>
   
@@ -65,13 +58,6 @@
   </url>
   
   <url>
-    <loc>http://caohuilong.github.io/2018/08/23/%E8%BF%81%E7%A7%BBvim-python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/</loc>
-    
-    <lastmod>2018-08-23</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://caohuilong.github.io/2018/08/26/Fabric%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/</loc>
     
     <lastmod>2018-08-26</lastmod>
@@ -79,9 +65,16 @@
   </url>
   
   <url>
-    <loc>http://caohuilong.github.io/2018/09/13/shell%E4%B8%ADset%E6%8C%87%E4%BB%A4%E7%9A%84%E7%94%A8%E6%B3%95/</loc>
+    <loc>http://caohuilong.github.io/2018/08/23/%E8%BF%81%E7%A7%BBvim-python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/</loc>
     
-    <lastmod>2018-09-13</lastmod>
+    <lastmod>2018-08-23</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/2018/08/21/VPS%E6%90%AD%E5%BB%BAshadowsocks%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%B9%B6%E5%BC%80%E5%90%AFBBR%E5%8A%A0%E9%80%9F/</loc>
+    
+    <lastmod>2018-08-21</lastmod>
     
   </url>
   
@@ -89,6 +82,13 @@
     <loc>http://caohuilong.github.io/2018/09/14/frp%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E5%AE%9E%E7%8E%B0ssh%E8%AE%BF%E9%97%AE%E5%86%85%E7%BD%91%E6%9C%BA%E5%99%A8/</loc>
     
     <lastmod>2018-09-14</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/2018/09/13/shell%E4%B8%ADset%E6%8C%87%E4%BB%A4%E7%9A%84%E7%94%A8%E6%B3%95/</loc>
+    
+    <lastmod>2018-09-13</lastmod>
     
   </url>
   
@@ -107,13 +107,6 @@
   </url>
   
   <url>
-    <loc>http://caohuilong.github.io/2018/10/10/caliper%E5%AE%89%E8%A3%85%E8%AE%B0%E5%BD%95/</loc>
-    
-    <lastmod>2018-10-10</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://caohuilong.github.io/2018/10/13/%E8%BF%9C%E7%A8%8B%E8%AE%BF%E9%97%AEDocker/</loc>
     
     <lastmod>2018-10-13</lastmod>
@@ -121,9 +114,23 @@
   </url>
   
   <url>
+    <loc>http://caohuilong.github.io/2018/10/10/caliper%E5%AE%89%E8%A3%85%E8%AE%B0%E5%BD%95/</loc>
+    
+    <lastmod>2018-10-10</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://caohuilong.github.io/2018/10/17/leetcode-107/</loc>
     
     <lastmod>2018-10-17</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/2018/10/21/leetcode-141-142/</loc>
+    
+    <lastmod>2018-10-21</lastmod>
     
   </url>
   
@@ -138,13 +145,6 @@
     <loc>http://caohuilong.github.io/2018/10/19/%E4%BB%8E%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A3%81%E7%9B%98%E9%95%9C%E5%83%8F%E5%88%9B%E5%BB%BA%E8%99%9A%E6%8B%9F%E6%9C%BA/</loc>
     
     <lastmod>2018-10-19</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://caohuilong.github.io/2018/10/21/leetcode-141-142/</loc>
-    
-    <lastmod>2018-10-21</lastmod>
     
   </url>
   
@@ -170,13 +170,6 @@
   </url>
   
   <url>
-    <loc>http://caohuilong.github.io/2018/12/05/docker%E5%AE%B9%E5%99%A8%E5%90%AF%E5%8A%A8%E6%97%B6%E7%AB%AF%E5%8F%A3%E6%98%A0%E5%B0%84%E5%A4%B1%E8%B4%A5/</loc>
-    
-    <lastmod>2018-12-05</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://caohuilong.github.io/2018/12/15/fabric-disable-tls/</loc>
     
     <lastmod>2018-12-15</lastmod>
@@ -184,9 +177,9 @@
   </url>
   
   <url>
-    <loc>http://caohuilong.github.io/2018/12/17/%E8%A7%A3%E5%86%B3vpn%E6%97%A0%E6%B3%95%E6%89%93%E5%BC%80%E8%B0%B7%E6%AD%8C%E5%AD%A6%E6%9C%AF%E7%9A%84%E9%97%AE%E9%A2%98/</loc>
+    <loc>http://caohuilong.github.io/2018/12/05/docker%E5%AE%B9%E5%99%A8%E5%90%AF%E5%8A%A8%E6%97%B6%E7%AB%AF%E5%8F%A3%E6%98%A0%E5%B0%84%E5%A4%B1%E8%B4%A5/</loc>
     
-    <lastmod>2018-12-17</lastmod>
+    <lastmod>2018-12-05</lastmod>
     
   </url>
   
@@ -198,16 +191,9 @@
   </url>
   
   <url>
-    <loc>http://caohuilong.github.io/2018/12/26/%E5%AD%A4%E5%84%BF%E8%BF%9B%E7%A8%8B%E4%B8%8E%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B/</loc>
+    <loc>http://caohuilong.github.io/2018/12/17/%E8%A7%A3%E5%86%B3vpn%E6%97%A0%E6%B3%95%E6%89%93%E5%BC%80%E8%B0%B7%E6%AD%8C%E5%AD%A6%E6%9C%AF%E7%9A%84%E9%97%AE%E9%A2%98/</loc>
     
-    <lastmod>2018-12-26</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://caohuilong.github.io/2019/02/15/v2ray%E5%AE%9E%E7%8E%B0%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/</loc>
-    
-    <lastmod>2019-02-15</lastmod>
+    <lastmod>2018-12-17</lastmod>
     
   </url>
   
@@ -219,9 +205,23 @@
   </url>
   
   <url>
+    <loc>http://caohuilong.github.io/2018/12/26/%E5%AD%A4%E5%84%BF%E8%BF%9B%E7%A8%8B%E4%B8%8E%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B/</loc>
+    
+    <lastmod>2018-12-26</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://caohuilong.github.io/2019/03/12/C-%E4%B8%ADsizeof%E7%9A%84%E7%94%A8%E6%B3%95%E6%80%BB%E7%BB%93/</loc>
     
     <lastmod>2019-03-12</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/2019/02/15/v2ray%E5%AE%9E%E7%8E%B0%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/</loc>
+    
+    <lastmod>2019-02-15</lastmod>
     
   </url>
   
@@ -240,9 +240,16 @@
   </url>
   
   <url>
-    <loc>http://caohuilong.github.io/2020/08/06/redo%20log%E4%B8%8Ebin%20log%E7%9A%84%E4%B8%AA%E4%BA%BA%E7%90%86%E8%A7%A3/</loc>
+    <loc>http://caohuilong.github.io/2020/09/01/B+%E6%A0%91%E4%B8%8E%E7%B4%A2%E5%BC%95/</loc>
     
-    <lastmod>2020-08-05</lastmod>
+    <lastmod>2020-09-01</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/2020/09/14/%E6%95%B0%E6%8D%AE%E5%BA%93%E9%94%81/</loc>
+    
+    <lastmod>2020-09-14</lastmod>
     
   </url>
   
@@ -254,16 +261,9 @@
   </url>
   
   <url>
-    <loc>http://caohuilong.github.io/2020/09/01/B+%E6%A0%91%E4%B8%8E%E7%B4%A2%E5%BC%95/</loc>
+    <loc>http://caohuilong.github.io/2020/08/06/redo%20log%E4%B8%8Ebin%20log%E7%9A%84%E4%B8%AA%E4%BA%BA%E7%90%86%E8%A7%A3/</loc>
     
-    <lastmod>2020-09-01</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://caohuilong.github.io/2020/09/14/%E6%95%B0%E6%8D%AE%E5%BA%93%E9%94%81/</loc>
-    
-    <lastmod>2020-09-14</lastmod>
+    <lastmod>2020-08-05</lastmod>
     
   </url>
   
@@ -285,6 +285,41 @@
     <loc>http://caohuilong.github.io/2020/12/09/CentOS6-5%E5%AE%89%E8%A3%85cloudinit-18/</loc>
     
     <lastmod>2020-12-09</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/2021/01/15/%E5%88%9B%E5%BB%BA%E5%8F%AF%E6%8C%82%E8%BD%BD%E5%88%B0windows%E8%99%9A%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98/</loc>
+    
+    <lastmod>2021-01-15</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/2021/01/17/Windows%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C/</loc>
+    
+    <lastmod>2021-01-16</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/2021/03/08/kms%E6%BF%80%E6%B4%BB%E6%9C%8D%E5%8A%A1%E5%99%A8/</loc>
+    
+    <lastmod>2021-03-07</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/2021/03/14/Golang%E4%BA%92%E6%96%A5%E9%94%81%E4%B8%8E%E8%AF%BB%E5%86%99%E9%94%81/</loc>
+    
+    <lastmod>2021-03-14</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/2021/08/11/%E5%8D%95%E9%93%BE%E8%A1%A8%E8%A7%A3%E9%A2%98%E6%8A%80%E5%B7%A7/</loc>
+    
+    <lastmod>2021-08-11</lastmod>
     
   </url>
   
@@ -345,13 +380,6 @@
   </url>
   
   <url>
-    <loc>http://caohuilong.github.io/categories/index.html</loc>
-    
-    <lastmod>2021-02-08</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://caohuilong.github.io/archives/index.html</loc>
     
     <lastmod>2021-02-09</lastmod>
@@ -365,10 +393,17 @@
     
   </url>
   
+  <url>
+    <loc>http://caohuilong.github.io/categories/index.html</loc>
+    
+    <lastmod>2021-02-08</lastmod>
+    
+  </url>
+  
 
   <url>
     <loc>http://caohuilong.github.io/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -376,455 +411,504 @@
   
   <url>
     <loc>http://caohuilong.github.io/tags/KVM/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/Openstack/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/vnc/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/ubuntu/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/Virtual-Machine/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/Tacker/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/Linux/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/NAT/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/DHCP/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/DNS/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/iptables/</loc>
-    <lastmod>2021-11-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://caohuilong.github.io/tags/Namespace/</loc>
-    <lastmod>2021-11-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://caohuilong.github.io/tags/SSH/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/shell/</loc>
-    <lastmod>2021-11-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://caohuilong.github.io/tags/python/</loc>
-    <lastmod>2021-11-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://caohuilong.github.io/tags/Expect/</loc>
-    <lastmod>2021-11-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://caohuilong.github.io/tags/pexpect/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/linux/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/chsh/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/tags/Namespace/</loc>
+    <lastmod>2021-11-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/tags/SSH/</loc>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/%E7%A3%81%E7%9B%98%E6%89%A9%E5%AE%B9/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/df/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/fdisk/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/mkfs/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/mount/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>http://caohuilong.github.io/tags/centos/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <loc>http://caohuilong.github.io/tags/python/</loc>
+    <lastmod>2021-11-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/tags/Expect/</loc>
+    <lastmod>2021-11-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/tags/pexpect/</loc>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/shadowsocks/</loc>
-    <lastmod>2021-11-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://caohuilong.github.io/tags/BBR/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/privoxy/</loc>
-    <lastmod>2021-11-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://caohuilong.github.io/tags/vim/</loc>
-    <lastmod>2021-11-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://caohuilong.github.io/tags/YouCompleteMe/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/Hyperledger-fabric/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/Docker/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/Docker-Compose/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/Go/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>http://caohuilong.github.io/tags/set/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <loc>http://caohuilong.github.io/tags/vim/</loc>
+    <lastmod>2021-11-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/tags/YouCompleteMe/</loc>
+    <lastmod>2021-11-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/tags/centos/</loc>
+    <lastmod>2021-11-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/tags/BBR/</loc>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/frp/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/tags/set/</loc>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/aliyun/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/%E5%AE%89%E5%85%A8%E7%BB%84%E8%A7%84%E5%88%99/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/Hyperledger-caliper/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/LeetCode/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/virt-install/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/socket/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/bind/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/%E5%A4%A7%E5%B0%8F%E7%AB%AF%E6%A8%A1%E5%BC%8F/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/Bugs/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/kubeadm/</loc>
-    <lastmod>2021-11-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://caohuilong.github.io/tags/%E5%AD%A4%E5%84%BF%E8%BF%9B%E7%A8%8B/</loc>
-    <lastmod>2021-11-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://caohuilong.github.io/tags/%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B/</loc>
-    <lastmod>2021-11-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://caohuilong.github.io/tags/v2ray/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/Git/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/tags/%E5%AD%A4%E5%84%BF%E8%BF%9B%E7%A8%8B/</loc>
+    <lastmod>2021-11-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/tags/%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B/</loc>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/sizeof/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/tags/v2ray/</loc>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/%E6%95%B0%E7%BB%84/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/MySQL/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/Rancher/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/CentOS/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/Cloud-init/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/%E9%95%9C%E5%83%8F/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/tags/Windows/</loc>
+    <lastmod>2021-11-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/tags/%E7%A3%81%E7%9B%98/</loc>
+    <lastmod>2021-11-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/tags/Winodws/</loc>
+    <lastmod>2021-11-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/tags/CloudBase-init/</loc>
+    <lastmod>2021-11-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/tags/%E4%BA%92%E6%96%A5%E9%94%81/</loc>
+    <lastmod>2021-11-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/tags/%E8%AF%BB%E5%86%99%E9%94%81/</loc>
+    <lastmod>2021-11-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/tags/%E5%8D%95%E9%93%BE%E8%A1%A8/</loc>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/Mistral/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/%E4%BA%91%E8%AE%A1%E7%AE%97/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/e2e-cli/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/tags/GDB/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -833,119 +917,126 @@
   
   <url>
     <loc>http://caohuilong.github.io/categories/KVM/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/categories/Openstack/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/categories/Linux/</loc>
-    <lastmod>2021-11-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://caohuilong.github.io/categories/%E8%BF%90%E7%BB%B4/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/categories/Shell/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/categories/%E8%BF%90%E7%BB%B4/</loc>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/categories/VPN/</loc>
-    <lastmod>2021-11-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://caohuilong.github.io/categories/VIM/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/categories/%E5%8C%BA%E5%9D%97%E9%93%BE/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/categories/VIM/</loc>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/categories/Docker/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/categories/LeetCode/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/categories/UNIX%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/categories/Kubernetes/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/categories/C/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/categories/algorithm/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/categories/MySQL/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/categories/Golang/</loc>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>http://caohuilong.github.io/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/</loc>
-    <lastmod>2021-11-07</lastmod>
+    <lastmod>2021-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>

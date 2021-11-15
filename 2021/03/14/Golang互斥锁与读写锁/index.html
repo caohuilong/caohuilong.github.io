@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-my.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-my.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-my.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"caohuilong.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.2.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+<meta name="description" content="Go语言通过 go 关键字可以很方便的创建 goroutine 实现并发编程，但是不同的 goroutine 同时访问或者修改公共资源时会带来一些意想不到的结果。在并发编程时，可以借助 Golang 的锁机制来保证数据安全，本文将介绍 Golang 的两种锁：互斥锁与读写锁，首先对这两种锁进行概念上的对比，然后通过实验对比不加锁与加锁的区别，最后介绍读写锁的读锁与写锁的互斥原则。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang互斥锁与读写锁">
+<meta property="og:url" content="http://caohuilong.github.io/2021/03/14/Golang%E4%BA%92%E6%96%A5%E9%94%81%E4%B8%8E%E8%AF%BB%E5%86%99%E9%94%81/index.html">
+<meta property="og:site_name" content="WooOh&#39;s blog">
+<meta property="og:description" content="Go语言通过 go 关键字可以很方便的创建 goroutine 实现并发编程，但是不同的 goroutine 同时访问或者修改公共资源时会带来一些意想不到的结果。在并发编程时，可以借助 Golang 的锁机制来保证数据安全，本文将介绍 Golang 的两种锁：互斥锁与读写锁，首先对这两种锁进行概念上的对比，然后通过实验对比不加锁与加锁的区别，最后介绍读写锁的读锁与写锁的互斥原则。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-14T09:07:44.000Z">
+<meta property="article:author" content="WooOh">
+<meta property="article:tag" content="互斥锁">
+<meta property="article:tag" content="读写锁">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://caohuilong.github.io/2021/03/14/Golang%E4%BA%92%E6%96%A5%E9%94%81%E4%B8%8E%E8%AF%BB%E5%86%99%E9%94%81/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>Golang互斥锁与读写锁 | WooOh's blog</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="WooOh's blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">WooOh's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">愿所有的等待，终能遇见幸福</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">72</span></a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">18</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">52</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BA%92%E6%96%A5%E9%94%81%E4%B8%8E%E8%AF%BB%E5%86%99%E9%94%81%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.</span> <span class="nav-text">互斥锁与读写锁的区别</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%8D%E5%8A%A0%E9%94%81%E4%B8%8E%E5%8A%A0%E4%BA%92%E6%96%A5%E9%94%81%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">2.</span> <span class="nav-text">不加锁与加互斥锁的区别</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%BB%E9%94%81%E4%B8%8E%E5%86%99%E9%94%81%E7%9A%84%E4%BA%92%E6%96%A5%E5%8E%9F%E5%88%99"><span class="nav-number">3.</span> <span class="nav-text">读锁与写锁的互斥原则</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="WooOh"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">WooOh</p>
+  <div class="site-description" itemprop="description">学着去分享</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">72</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/caohuilong" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;caohuilong" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:cao130507@163.com" title="E-Mail → mailto:cao130507@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/cao0507" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;cao0507" rel="noopener" target="_blank"><i class="fa fa-copyright fa-fw"></i>CSDN</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://ecx-ops.ctcdn.cn/" title="ECX → https:&#x2F;&#x2F;ecx-ops.ctcdn.cn" rel="noopener" target="_blank"><i class="fa fa-cloud fa-fw"></i>ECX</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+
+    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=360 height=86 src="//music.163.com/outchain/player?type=2&id=2919622&auto=1&height=66"></iframe>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://caohuilong.github.io/2021/03/14/Golang%E4%BA%92%E6%96%A5%E9%94%81%E4%B8%8E%E8%AF%BB%E5%86%99%E9%94%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="WooOh">
+      <meta itemprop="description" content="学着去分享">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WooOh's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Golang互斥锁与读写锁
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-03-14 17:07:44" itemprop="dateCreated datePublished" datetime="2021-03-14T17:07:44+08:00">2021-03-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>Go语言通过 go 关键字可以很方便的创建 goroutine 实现并发编程，但是不同的 goroutine 同时访问或者修改公共资源时会带来一些意想不到的结果。在并发编程时，可以借助 Golang 的锁机制来保证数据安全，本文将介绍 Golang 的两种锁：<strong>互斥锁</strong>与<strong>读写锁</strong>，首先对这两种锁进行概念上的对比，然后通过实验对比不加锁与加锁的区别，最后介绍读写锁的读锁与写锁的互斥原则。</p>
+<a id="more"></a>
+
+<h5 id="互斥锁与读写锁的区别"><a href="#互斥锁与读写锁的区别" class="headerlink" title="互斥锁与读写锁的区别"></a>互斥锁与读写锁的区别</h5><p>Go 语言标准库 <code>sync</code> 提供了 2 种锁，互斥锁 <code>sync.Mutex</code> 和读写锁 <code>sync.RWMutex</code> 。他们的区别如下：</p>
+<ul>
+<li>互斥锁：互斥即不可同时运行。即使用了互斥锁的两个代码片段互相排斥，只有其中一个代码片段执行完成后，另一个才能执行。Go 标准库中提供了 sync.Mutex 互斥锁类型及其两个方法：<ul>
+<li>Lock 加锁</li>
+<li>Unlock 释放锁</li>
+</ul>
+</li>
+<li>读写锁：读写锁分为读锁和写锁，读锁是允许同时执行的，但写锁是互斥的。Go 标准库中提供了 sync.RWMutex 互斥锁类型及其四个方法：<ul>
+<li>Lock 加写锁</li>
+<li>Unlock 释放写锁</li>
+<li>RLock 加读锁</li>
+<li>RUnlock 释放读锁</li>
+</ul>
+</li>
+</ul>
+<h5 id="不加锁与加互斥锁的区别"><a href="#不加锁与加互斥锁的区别" class="headerlink" title="不加锁与加互斥锁的区别"></a>不加锁与加互斥锁的区别</h5><p>下面的代码，开启了三个协程，每个协程让一个公共变量 count 加 10000 次 1，初看下来，最终的 count 值应该是 30000</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;sync&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>  &#123;</span><br><span class="line">	count := <span class="number">0</span></span><br><span class="line">	wg := sync.WaitGroup&#123;&#125;</span><br><span class="line">	wg.Add(<span class="number">3</span>)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">3</span>; i++ &#123;</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="keyword">defer</span> wg.Done()</span><br><span class="line">			<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; <span class="number">10000</span>; j++ &#123;</span><br><span class="line">				count = count + <span class="number">1</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;()</span><br><span class="line">	&#125;</span><br><span class="line">	wg.Wait()</span><br><span class="line"></span><br><span class="line">	fmt.Printf(<span class="string">&quot;count=%d\n&quot;</span>, count)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是实际上运行的结果可能并不等于 30000，而且每次运行的结果各不相同</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 第一次</span></span><br><span class="line">count=<span class="number">19623</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 第二次</span></span><br><span class="line">count=<span class="number">15833</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 第三次</span></span><br><span class="line">count=<span class="number">20865</span></span><br></pre></td></tr></table></figure>
+<p>原因就在于这三个协程在执行时，先读取 count 再更新 count 的值，而这个过程并不具备原子性，所以导致了数据的不准确。</p>
+<p>解决这个问题的方法，就是给修改 count 的代码加上 Mutex 互斥锁，要求同一时刻，仅能有一个协程能对 count 操作。修改上面的代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;sync&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>  &#123;</span><br><span class="line">	count := <span class="number">0</span></span><br><span class="line">	lock := sync.Mutex&#123;&#125;	<span class="comment">// 定义一个互斥锁</span></span><br><span class="line">	wg := sync.WaitGroup&#123;&#125;</span><br><span class="line">	wg.Add(<span class="number">3</span>)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">3</span>; i++ &#123;</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="keyword">defer</span> wg.Done()</span><br><span class="line">			<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; <span class="number">10000</span>; j++ &#123;</span><br><span class="line">				lock.Lock()			<span class="comment">// 操作count之前加锁</span></span><br><span class="line">				count = count + <span class="number">1</span></span><br><span class="line">				lock.Unlock()		<span class="comment">// 操作完之后释放锁</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;()</span><br><span class="line">	&#125;</span><br><span class="line">	wg.Wait()</span><br><span class="line"></span><br><span class="line">	fmt.Printf(<span class="string">&quot;count=%d\n&quot;</span>, count)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样，不管执行多少次上面的程序，输出都只有一个结果：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">count=<span class="number">30000</span></span><br></pre></td></tr></table></figure>
+<p>使用 Mutext 锁虽然很简单，但仍然有几点需要注意：</p>
+<ul>
+<li>同一协程里，不要在尚未解锁时再次使加锁</li>
+<li>同一协程里，不要对已解锁的锁再次解锁</li>
+<li>加了锁后，别忘了解锁，必要时使用 defer 语句</li>
+</ul>
+<h5 id="读锁与写锁的互斥原则"><a href="#读锁与写锁的互斥原则" class="headerlink" title="读锁与写锁的互斥原则"></a>读锁与写锁的互斥原则</h5><p>主要的互斥原则如下：</p>
+<ol>
+<li>读锁之间不互斥，没有写锁的情况下，读锁是无阻塞的，多个协程可以同时获得读锁。</li>
+<li>写锁之间是互斥的，存在写锁，其他写锁阻塞。</li>
+<li>写锁与读锁是互斥的，如果存在读锁，写锁阻塞，如果存在写锁，读锁阻塞。</li>
+</ol>
+<p>先来看一下下面的程序，有四个协程，有两个加写锁，还有两个加读锁，加锁之后分别休眠 1s，表示处理逻辑</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;sync&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	lock = sync.RWMutex&#123;&#125;</span><br><span class="line">	wg = sync.WaitGroup&#123;&#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">writeLock</span><span class="params">(s <span class="keyword">string</span>)</span></span>  &#123;</span><br><span class="line">	<span class="keyword">defer</span> wg.Done()</span><br><span class="line">	lock.Lock()</span><br><span class="line">	fmt.Printf(<span class="string">&quot;goroutine %s get write lock\n&quot;</span>, s)</span><br><span class="line">	time.Sleep(<span class="number">1</span>*time.Second)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;goroutine %s release write lock\n&quot;</span>, s)</span><br><span class="line">	lock.Unlock()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">readLock</span><span class="params">(s <span class="keyword">string</span>)</span></span>  &#123;</span><br><span class="line">	<span class="keyword">defer</span> wg.Done()</span><br><span class="line">	lock.RLock()</span><br><span class="line">	fmt.Printf(<span class="string">&quot;goroutine %s get read lock\n&quot;</span>, s)</span><br><span class="line">	time.Sleep(<span class="number">1</span>*time.Second)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;goroutine %s release read lock\n&quot;</span>, s)</span><br><span class="line">	lock.RUnlock()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>  &#123;</span><br><span class="line">	wg.Add(<span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> writeLock(<span class="string">&quot;A&quot;</span>)</span><br><span class="line">	<span class="keyword">go</span> writeLock(<span class="string">&quot;B&quot;</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> readLock(<span class="string">&quot;C&quot;</span>)</span><br><span class="line">	<span class="keyword">go</span> readLock(<span class="string">&quot;D&quot;</span>)</span><br><span class="line"></span><br><span class="line">	wg.Wait()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>程序的运行结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">goroutine A get write lock			&#x2F;&#x2F; 协程A获得写锁之后，其他协程必须等它释放写锁之后才能加锁 ——验证了写锁与其他的锁互斥</span><br><span class="line">goroutine A release write lock</span><br><span class="line">goroutine D get read lock			&#x2F;&#x2F; 协程C与D在A释放写锁之后，同时获得了读锁，处理逻辑可以并行执行 ——验证了读锁之间不互斥</span><br><span class="line">goroutine C get read lock</span><br><span class="line">goroutine D release read lock</span><br><span class="line">goroutine C release read lock</span><br><span class="line">goroutine B get write lock			&#x2F;&#x2F; 协程B必须要等C和D都释放读锁之后，才能加写锁 ——验证了读锁与写锁互斥，存在读锁，写锁阻塞</span><br><span class="line">goroutine B release write lock</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>原创技术分享，您的支持将鼓励我继续创作</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.png" alt="WooOh 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="WooOh 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>WooOh
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://caohuilong.github.io/2021/03/14/Golang%E4%BA%92%E6%96%A5%E9%94%81%E4%B8%8E%E8%AF%BB%E5%86%99%E9%94%81/" title="Golang互斥锁与读写锁">http://caohuilong.github.io/2021/03/14/Golang互斥锁与读写锁/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E4%BA%92%E6%96%A5%E9%94%81/" rel="tag"><i class="fa fa-tag"></i> 互斥锁</a>
+              <a href="/tags/%E8%AF%BB%E5%86%99%E9%94%81/" rel="tag"><i class="fa fa-tag"></i> 读写锁</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/03/08/kms%E6%BF%80%E6%B4%BB%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="prev" title="kms">
+                  <i class="fa fa-chevron-left"></i> kms
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/08/11/%E5%8D%95%E9%93%BE%E8%A1%A8%E8%A7%A3%E9%A2%98%E6%8A%80%E5%B7%A7/" rel="next" title="单链表解题技巧">
+                  单链表解题技巧 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">WooOh</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">243k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:41</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div><script color="120,120,120" opacity="0.5" zIndex="-1" count="150" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
