@@ -380,6 +380,13 @@
   </url>
   
   <url>
+    <loc>http://caohuilong.github.io/2021/04/21/%E5%A6%82%E4%BD%95%E6%9F%A5%E6%89%BEveth%20pair%E7%9A%84peer%E8%AE%BE%E5%A4%87/</loc>
+    
+    <lastmod>2021-04-21</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://caohuilong.github.io/google9b245de98ee10125.html</loc>
     
     <lastmod>2021-10-16</lastmod>
@@ -948,6 +955,20 @@
     <priority>0.6</priority>
   </url>
   
+  <url>
+    <loc>http://caohuilong.github.io/tags/veth-pair/</loc>
+    <lastmod>2022-02-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/tags/namespace/</loc>
+    <lastmod>2022-02-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
 
   
   <url>
@@ -1078,6 +1099,13 @@
   
   <url>
     <loc>http://caohuilong.github.io/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/</loc>
+    <lastmod>2022-02-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://caohuilong.github.io/categories/%E7%BD%91%E7%BB%9C%E8%99%9A%E6%8B%9F%E5%8C%96/</loc>
     <lastmod>2022-02-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
