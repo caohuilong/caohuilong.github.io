@@ -6,7 +6,7 @@
   <link href="http://caohuilong.github.io/atom.xml" rel="self"/>
   
   <link href="http://caohuilong.github.io/"/>
-  <updated>2021-10-11T11:27:59.000Z</updated>
+  <updated>2021-10-19T12:40:59.000Z</updated>
   <id>http://caohuilong.github.io/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Golang交叉编译配置</title>
+    <link href="http://caohuilong.github.io/2021/10/19/golang%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E9%85%8D%E7%BD%AE/"/>
+    <id>http://caohuilong.github.io/2021/10/19/golang%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E9%85%8D%E7%BD%AE/</id>
+    <published>2021-10-19T12:40:59.000Z</published>
+    <updated>2021-10-19T12:40:59.000Z</updated>
+    
+    <content type="html"><![CDATA[<h4 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h4><p>在阅读 kube-ovn 源码时，发现源码中引用的 <a href="https://github.com/vishvananda/netlink">netlink</a> 库在 windows 环境下，有些代码引用失败。错误如下图：</p><a id="more"></a><p><img src="./2021-10-19-Golang%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E9%85%8D%E7%BD%AE/netlink%E5%8C%85%E5%BC%95%E7%94%A8%E9%94%99%E8%AF%AF.png" alt="netlink包引用错误"></p><p>这是因为 netlink 包在不同的操作系统下实现有差异，netlink 库 build 是区分操作系统的，我需要应用 linux 环境下的版本，但是在 Windows 的开发环境中，默认的操作系统是 windows，并且是开启 CGO 的，如下图：</p><p>![build tags](./2021-10-19-Golang交叉编译配置/build tags.png)</p><blockquote><p>CGO_ENABLED=0的意思是使用C语言版本的GO编译器，参数配置为0的时候就关闭C语言版本的编译器了，交叉编译不支持 CGO 所以要禁用它。</p></blockquote><h4 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h4><p>配置 Goland 的 build tags，设置 GOOS=linux，CGO_ENABLED=0，如下图所示：</p><p>![交叉编译build tags配置](./2021-10-19-Golang交叉编译配置/交叉编译build tags配置.png)</p><p>正确配置之后，netlink 包就能够正常引用了。</p><h4 id="其他补充"><a href="#其他补充" class="headerlink" title="其他补充"></a>其他补充</h4><h5 id="Mac-下编译-Linux-和-Windows-64位可执行程序"><a href="#Mac-下编译-Linux-和-Windows-64位可执行程序" class="headerlink" title="Mac 下编译 Linux 和 Windows 64位可执行程序"></a>Mac 下编译 Linux 和 Windows 64位可执行程序</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CGO_ENABLED&#x3D;0 GOOS&#x3D;linux GOARCH&#x3D;amd64 go build main.go</span><br><span class="line">CGO_ENABLED&#x3D;0 GOOS&#x3D;windows GOARCH&#x3D;amd64 go build main.go</span><br></pre></td></tr></table></figure><h5 id="Linux-下编译-Mac-和-Windows-64位可执行程序"><a href="#Linux-下编译-Mac-和-Windows-64位可执行程序" class="headerlink" title="Linux 下编译 Mac 和 Windows 64位可执行程序"></a>Linux 下编译 Mac 和 Windows 64位可执行程序</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CGO_ENABLED&#x3D;0 GOOS&#x3D;darwin GOARCH&#x3D;amd64 go build main.go</span><br><span class="line">CGO_ENABLED&#x3D;0 GOOS&#x3D;windows GOARCH&#x3D;amd64 go build main.go</span><br></pre></td></tr></table></figure><h5 id="Windows-下编译-Mac-和-Linux-64位可执行程序"><a href="#Windows-下编译-Mac-和-Linux-64位可执行程序" class="headerlink" title="Windows 下编译 Mac 和 Linux 64位可执行程序"></a>Windows 下编译 Mac 和 Linux 64位可执行程序</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">SET CGO_ENABLED&#x3D;0</span><br><span class="line">SET GOOS&#x3D;darwin</span><br><span class="line">SET GOARCH&#x3D;amd64</span><br><span class="line">go build main.go</span><br><span class="line"></span><br><span class="line">SET CGO_ENABLED&#x3D;0</span><br><span class="line">SET GOOS&#x3D;linux</span><br><span class="line">SET GOARCH&#x3D;amd64</span><br><span class="line">go build main.go</span><br></pre></td></tr></table></figure><ul><li>GOOS：目标平台的操作系统（darwin、freebsd、linux、windows）</li><li>GOARCH：目标平台的体系架构（386、amd64、arm）</li></ul>]]></content>
+    
+    
+    <summary type="html">&lt;h4 id=&quot;问题描述&quot;&gt;&lt;a href=&quot;#问题描述&quot; class=&quot;headerlink&quot; title=&quot;问题描述&quot;&gt;&lt;/a&gt;问题描述&lt;/h4&gt;&lt;p&gt;在阅读 kube-ovn 源码时，发现源码中引用的 &lt;a href=&quot;https://github.com/vishvananda/netlink&quot;&gt;netlink&lt;/a&gt; 库在 windows 环境下，有些代码引用失败。错误如下图：&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Golang" scheme="http://caohuilong.github.io/categories/Golang/"/>
+    
+    
+    <category term="Golang" scheme="http://caohuilong.github.io/tags/Golang/"/>
+    
+  </entry>
   
   <entry>
     <title>cgroups是如何工作的？</title>
@@ -456,27 +477,6 @@
     
     
     <category term="GDB" scheme="http://caohuilong.github.io/tags/GDB/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>给新 Git 账户添加 ssh-key</title>
-    <link href="http://caohuilong.github.io/2019/02/21/%E7%BB%99%E6%96%B0git%E8%B4%A6%E6%88%B7%E6%B7%BB%E5%8A%A0ssh-key/"/>
-    <id>http://caohuilong.github.io/2019/02/21/%E7%BB%99%E6%96%B0git%E8%B4%A6%E6%88%B7%E6%B7%BB%E5%8A%A0ssh-key/</id>
-    <published>2019-02-21T09:02:23.000Z</published>
-    <updated>2019-02-21T09:02:23.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在使用 git 的时候，git 与远程服务器一般通过 https 进行传输，这种传输方式在每次 push 和 pull 时都需要输入账户和密码，比较麻烦。所以更好的方法是通过 ssh 进行传输，这需要在本机上创建 ssh-key 密钥对，并把其中的公钥添加到远程的 Git 服务器中。但有时又会使用到多个 git 账户登录不同的 git 服务器，所以就涉及到添加 ssh-key 密钥对了。</p><a id="more"></a><p>我的环境中最初是针对 GitHub 的账户设置了 ssh 的密钥对，然后我现在需要针对另一个 git 账户进行设置密钥对，比如牛客网的 git 服务器。</p><h2 id="添加操作过程"><a href="#添加操作过程" class="headerlink" title="添加操作过程"></a>添加操作过程</h2><p><strong>1. 新建 SSH key：</strong></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ cd ~&#x2F;.ssh</span><br><span class="line">$ ssh-keygen -t rsa -C &quot;xxx@email.com&quot;</span><br><span class="line">Generating public&#x2F;private rsa key pair.</span><br><span class="line">Enter file in which to save the key (&#x2F;home&#x2F;chl&#x2F;.ssh&#x2F;id_rsa): id_rsa_nowcoder</span><br><span class="line">Enter passphrase (empty for no passphrase): </span><br><span class="line">Enter same passphrase again: </span><br><span class="line">Your identification has been saved in id_rsa_nowcoder.</span><br><span class="line">Your public key has been saved in id_rsa_nowcoder.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:hjOHuHTiXqCjTPCBf81owybsdflq&#x2F;HVWcq4jBZjnCNs xxx@email.com</span><br><span class="line">The key&#39;s randomart image is:</span><br><span class="line">+---[RSA 2048]----+</span><br><span class="line">|                 |</span><br><span class="line">|   . o           |</span><br><span class="line">|o   Oo o         |</span><br><span class="line">|&#x3D;...oBoo         |</span><br><span class="line">| &#x3D;.+*+O.S o      |</span><br><span class="line">|+.o&#x3D;EB.&#x3D;.&#x3D;       |</span><br><span class="line">|o.* +.o .o .     |</span><br><span class="line">|.o + o.o.        |</span><br><span class="line">|o.  o  ...       |</span><br><span class="line">+----[SHA256]-----+</span><br></pre></td></tr></table></figure><blockquote><p>上面设置名称为 id_rsa_nowcoder</p></blockquote><p><strong>2. 新秘钥添加到 SSH agent 中</strong></p><p>因为默认只读取 id_rsa，为了让 SSH 识别新的私钥，需将其添加到 SSH agent 中：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-add ~&#x2F;.ssh&#x2F;id_rsa_nowcoder</span><br><span class="line">Could not open a connection to your authentication agent.</span><br></pre></td></tr></table></figure><p>但是出现了 Could not open a connection to your authentication agent. 的错误，用一下方法解决：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-agent bash</span><br><span class="line">$ ssh-add ~&#x2F;.ssh&#x2F;id_rsa_nowcoder</span><br><span class="line">Identity added: ~&#x2F;.ssh&#x2F;id_rsa_nowcoder (~&#x2F;.ssh&#x2F;id_rsa_nowcoder)</span><br></pre></td></tr></table></figure><p><strong>3. 在 git 账户中添加 SSH key</strong></p><p>登录 git 账户中添加，完成之后，SSH key 就生效了。检测方法：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git clone 你的仓库ssh地址</span><br></pre></td></tr></table></figure><p>若这时不再询问密码，说明设置生效。</p><p><strong>4. 更改远程仓库地址</strong></p><ul><li><p>修改命令：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git remote set-url origin 你的仓库ssh地址</span><br></pre></td></tr></table></figure></li><li><p>或者先删后加：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git remote rm origin</span><br><span class="line">$ git remote add origin 你的仓库ssh地址</span><br></pre></td></tr></table></figure></li><li><p>或者修改 config 文件</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git config -e</span><br><span class="line">修改 url</span><br></pre></td></tr></table></figure><p>更改完成之后，再通过 git push 或 git pull 就不需要输入账号和密码了。</p></li></ul><hr>]]></content>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot; title=&quot;背景&quot;&gt;&lt;/a&gt;背景&lt;/h2&gt;&lt;p&gt;在使用 git 的时候，git 与远程服务器一般通过 https 进行传输，这种传输方式在每次 push 和 pull 时都需要输入账户和密码，比较麻烦。所以更好的方法是通过 ssh 进行传输，这需要在本机上创建 ssh-key 密钥对，并把其中的公钥添加到远程的 Git 服务器中。但有时又会使用到多个 git 账户登录不同的 git 服务器，所以就涉及到添加 ssh-key 密钥对了。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Linux" scheme="http://caohuilong.github.io/categories/Linux/"/>
-    
-    
-    <category term="Git" scheme="http://caohuilong.github.io/tags/Git/"/>
     
   </entry>
   

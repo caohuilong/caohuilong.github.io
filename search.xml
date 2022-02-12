@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Golang交叉编译配置</title>
+      <link href="2021/10/19/golang%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E9%85%8D%E7%BD%AE/"/>
+      <url>2021/10/19/golang%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E9%85%8D%E7%BD%AE/</url>
+      
+        <content type="html"><![CDATA[<h4 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h4><p>在阅读 kube-ovn 源码时，发现源码中引用的 <a href="https://github.com/vishvananda/netlink">netlink</a> 库在 windows 环境下，有些代码引用失败。错误如下图：</p><a id="more"></a><p><img src="./2021-10-19-Golang%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E9%85%8D%E7%BD%AE/netlink%E5%8C%85%E5%BC%95%E7%94%A8%E9%94%99%E8%AF%AF.png" alt="netlink包引用错误"></p><p>这是因为 netlink 包在不同的操作系统下实现有差异，netlink 库 build 是区分操作系统的，我需要应用 linux 环境下的版本，但是在 Windows 的开发环境中，默认的操作系统是 windows，并且是开启 CGO 的，如下图：</p><p>![build tags](./2021-10-19-Golang交叉编译配置/build tags.png)</p><blockquote><p>CGO_ENABLED=0的意思是使用C语言版本的GO编译器，参数配置为0的时候就关闭C语言版本的编译器了，交叉编译不支持 CGO 所以要禁用它。</p></blockquote><h4 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h4><p>配置 Goland 的 build tags，设置 GOOS=linux，CGO_ENABLED=0，如下图所示：</p><p>![交叉编译build tags配置](./2021-10-19-Golang交叉编译配置/交叉编译build tags配置.png)</p><p>正确配置之后，netlink 包就能够正常引用了。</p><h4 id="其他补充"><a href="#其他补充" class="headerlink" title="其他补充"></a>其他补充</h4><h5 id="Mac-下编译-Linux-和-Windows-64位可执行程序"><a href="#Mac-下编译-Linux-和-Windows-64位可执行程序" class="headerlink" title="Mac 下编译 Linux 和 Windows 64位可执行程序"></a>Mac 下编译 Linux 和 Windows 64位可执行程序</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CGO_ENABLED&#x3D;0 GOOS&#x3D;linux GOARCH&#x3D;amd64 go build main.go</span><br><span class="line">CGO_ENABLED&#x3D;0 GOOS&#x3D;windows GOARCH&#x3D;amd64 go build main.go</span><br></pre></td></tr></table></figure><h5 id="Linux-下编译-Mac-和-Windows-64位可执行程序"><a href="#Linux-下编译-Mac-和-Windows-64位可执行程序" class="headerlink" title="Linux 下编译 Mac 和 Windows 64位可执行程序"></a>Linux 下编译 Mac 和 Windows 64位可执行程序</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CGO_ENABLED&#x3D;0 GOOS&#x3D;darwin GOARCH&#x3D;amd64 go build main.go</span><br><span class="line">CGO_ENABLED&#x3D;0 GOOS&#x3D;windows GOARCH&#x3D;amd64 go build main.go</span><br></pre></td></tr></table></figure><h5 id="Windows-下编译-Mac-和-Linux-64位可执行程序"><a href="#Windows-下编译-Mac-和-Linux-64位可执行程序" class="headerlink" title="Windows 下编译 Mac 和 Linux 64位可执行程序"></a>Windows 下编译 Mac 和 Linux 64位可执行程序</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">SET CGO_ENABLED&#x3D;0</span><br><span class="line">SET GOOS&#x3D;darwin</span><br><span class="line">SET GOARCH&#x3D;amd64</span><br><span class="line">go build main.go</span><br><span class="line"></span><br><span class="line">SET CGO_ENABLED&#x3D;0</span><br><span class="line">SET GOOS&#x3D;linux</span><br><span class="line">SET GOARCH&#x3D;amd64</span><br><span class="line">go build main.go</span><br></pre></td></tr></table></figure><ul><li>GOOS：目标平台的操作系统（darwin、freebsd、linux、windows）</li><li>GOARCH：目标平台的体系架构（386、amd64、arm）</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> Golang </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Golang </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>cgroups是如何工作的？</title>
       <link href="2021/10/11/cgroups%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%EF%BC%9F/"/>
       <url>2021/10/11/cgroups%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%EF%BC%9F/</url>
@@ -1153,9 +1178,9 @@
       
         <tags>
             
-            <tag> python </tag>
-            
             <tag> vim </tag>
+            
+            <tag> python </tag>
             
             <tag> YouCompleteMe </tag>
             
